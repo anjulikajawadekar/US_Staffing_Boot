@@ -138,7 +138,7 @@ public class ServiceFirst {
 	}
 
 	public ResponseEntity<?> AddCandidate(String candidate_name, String visa_type, String rate_term,
-			String submitted_rate, String pnone, String email, String remark, String reason, int recruiter_id,
+			String submitted_rate, String pnone, String email,String status, String remark, String reason, int recruiter_id,
 			int requisition_id) {
 
 		Session hbmsession = null;
@@ -158,7 +158,7 @@ public class ServiceFirst {
 //		hbmsession.save(cd);
 		int candi2 = (Integer) hbmsession.save(cd);
 
-		st.setStatus("Candidate Screening");
+		st.setStatus(status);
 		st.setStatus_date(now);
 		rec.setRecruiter_id(recruiter_id);
 		st.setRecruiter(rec);
@@ -251,10 +251,9 @@ public class ServiceFirst {
 		return results;
 	}
 
-	public ResponseEntity<?> AddStatus1(int recruiter_id, int requisition_id, String status) {
+	public void AddStatus1(int recruiter_id, int requisition_id, String status) {
 		// TODO Auto-generated method stub
 		
-		System.out.println("H2%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
 		Session session = sessionFactory.openSession();
 		Transaction transaction = session.beginTransaction();
 
@@ -272,10 +271,11 @@ public class ServiceFirst {
 
 		transaction.commit();
 		session.close();
-		return new ResponseEntity<StatusTbl>(st, HttpStatus.OK);
+	//	return new ResponseEntity<StatusTbl>(st, HttpStatus.OK);
+		
 	}
 
-	public ResponseEntity<?> AddStatus2(int recruiter_id, int requisition_id, int candidate_id, String status) {
+	public void AddStatus2(int recruiter_id, int requisition_id, int candidate_id, String status) {
 		// TODO Auto-generated method stub
 		Session session = sessionFactory.openSession();
 		Transaction transaction = session.beginTransaction();
@@ -295,23 +295,25 @@ public class ServiceFirst {
 
 		transaction.commit();
 		session.close();
-		return new ResponseEntity<StatusTbl>(st, HttpStatus.OK);
+		
+		//return new ResponseEntity<StatusTbl>(st, HttpStatus.OK);
+
 	}
 
-	public List<StatusTbl> getLastStatus1(int recruiter_id, int requisition_id, String status) {
+	public ResponseEntity<String> Update_status1(int recruiter_id, int requisition_id, String status) {
 		// TODO Auto-generated method stub
 		strepo.setEnabledFalse1(recruiter_id, requisition_id);
 		
 		System.out.println("H1");
 		AddStatus1(recruiter_id, requisition_id, status);
-		return null;
+		return ResponseEntity.ok("Status without candidate updated successful!");
 	}
 
-	public List<StatusTbl> getLastStatus2(int recruiter_id, int requisition_id,  int candidate_id, String status) {
+	public ResponseEntity<String> Update_status2(int recruiter_id, int requisition_id,  int candidate_id, String status) {
 		strepo.setEnabledFalse2(recruiter_id, requisition_id, candidate_id);
 
 		AddStatus2(recruiter_id, requisition_id, candidate_id, status);
-		return null;
+		return ResponseEntity.ok("Status with candidate updated successful!");
 	}
 
 }
