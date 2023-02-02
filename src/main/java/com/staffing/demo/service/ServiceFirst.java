@@ -42,9 +42,6 @@ public class ServiceFirst {
 	@Autowired
 	ServiceFirst serviceFirst;
 
-//	@Autowired
-//	private EntityManager entityManager;
-
 	Recruiter rec = new Recruiter();
 	Requisition rq = new Requisition();
 	StatusTbl st = new StatusTbl();
@@ -116,12 +113,7 @@ public class ServiceFirst {
 		transaction = hbmsession.beginTransaction();
 
 		int rq2 = (Integer) hbmsession.save(rq);
-//		if(id==0) 
-//			System.out.println("record not save");
-//		else 
-//		   System.out.println("rq2-id : "+rq2);
 
-//		int rq_id=rq.getRequisition_id();
 		st.setStatus("Assigned");
 		st.setStatus_date(now);
 		rec.setRecruiter_id(recruiter_id);
@@ -155,7 +147,6 @@ public class ServiceFirst {
 
 		hbmsession = sessionFactory.openSession();
 		transaction = hbmsession.beginTransaction();
-//		hbmsession.save(cd);
 		int candi2 = (Integer) hbmsession.save(cd);
 
 		st.setStatus(status);
@@ -187,7 +178,6 @@ public class ServiceFirst {
 
 		cr.select(root).where((cb.equal(root.get("recruiter").get("recruiter_id"), recruiter_id)),
 				((cb.equal(root.get("requisition").get("requisition_id"), requisition_id))));
-//				(cb.equal(cb.function("YEAR", Integer.class, root.get("clo_date")), currentYear1)));
 
 		Query query = session.createQuery(cr);
 		List<StatusTbl> results = query.getResultList();
@@ -218,35 +208,21 @@ public class ServiceFirst {
 
 		for (Iterator<StatusTbl> i = results.iterator(); i.hasNext();) {
 
-			// database1 is an entity bean
 			StatusTbl x = (StatusTbl) i.next();
 			Candidate cid = x.getCandidate();
-
 			if (cid == null) {
 
 				int sid = x.getStatus_id();
-				System.out.println("Status : " + x.getStatus_id());
-				System.out.println("Status : " + x.getStatus());
-				System.out.println("Status_date : " + x.getStatus_date());
+//				System.out.println("Status : " + x.getStatus_id());			
 				st.setStatus_id(sid);
 				st.setFlag(false);
 				session.saveOrUpdate(st);
-//				transaction.commit();
-//				transaction = session.beginTransaction();
 				session.flush();
 				session.clear();
 			}
 
-//			st.setStatus(status);
-//			st.setStatus_date(now);
-//			rec.setRecruiter_id(recruiter_id);
-//			st.setRecruiter(rec);
-//			rq.setRequisition_id(requisition_id);
-//			st.setRequisition(rq);
-
 			System.out.println("Profile updated successful!");
 		}
-
 		session.close();
 		return results;
 	}
@@ -264,7 +240,6 @@ public class ServiceFirst {
 		rq.setRequisition_id(requisition_id);
 		st.setRequisition(rq);
 		st.setFlag(true);
-
 		
 		session.save(st);
 		System.out.println("Status without candidate updated successful!");
