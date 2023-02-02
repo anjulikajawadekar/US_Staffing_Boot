@@ -30,7 +30,7 @@ public class ControllerFirst {
 	@Autowired
 	RecruiterRepo recruiterRepo;
 
-	@GetMapping("/home")
+	@GetMapping("/home2")
 	public String home() {
 		return "Hello there!!!!!!!!!!";
 	}
