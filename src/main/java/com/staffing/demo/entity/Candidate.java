@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -21,33 +22,40 @@ public class Candidate {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer candidate_id;
 	private String candidate_name;
-	private String Visa_type;
+	private String visa_type;
 	private String rate_term;
 	private String submitted_rate;
-	private String pnone;	
+	private String pnone;
 	private String email;
 	private String remark;
 	private String reason;
-	
-	/*@ManyToOne
-	@JoinColumn(name ="status_id")
-	private Status status;*/
-	
-	@ManyToOne
-	@JoinColumn(name ="requisition_id")
-	private Requisition requisition;	
-	
-	@ManyToOne
-	@JoinColumn(name ="recruiter_id")
-	private Recruiter recruiter;
-	
-	@OneToMany(mappedBy = "requisition")
+
+//	@ManyToMany
+//	@JoinTable(name = "requsition_candidate", joinColumns = @JoinColumn(name = "candidate_id"), inverseJoinColumns = @JoinColumn(name = "requisition_id"))
+//	private List<Requisition> candidateRequistion;
+
+	@OneToMany(mappedBy = "candidate")
 	@JsonIgnore
-	private List<Status> status;
-	
+	private List<StatusTbl> statustbl;
+
 	public Candidate() {
 		super();
 		// TODO Auto-generated constructor stub
+	}
+
+	public Candidate(Integer candidate_id, String candidate_name, String visa_type, String rate_term,
+			String submitted_rate, String pnone, String email, String remark, String reason, List<StatusTbl> statustbl) {
+		super();
+		this.candidate_id = candidate_id;
+		this.candidate_name = candidate_name;
+		this.visa_type = visa_type;
+		this.rate_term = rate_term;
+		this.submitted_rate = submitted_rate;
+		this.pnone = pnone;
+		this.email = email;
+		this.remark = remark;
+		this.reason = reason;
+		this.statustbl = statustbl;
 	}
 
 	public Integer getCandidate_id() {
@@ -67,11 +75,11 @@ public class Candidate {
 	}
 
 	public String getVisa_type() {
-		return Visa_type;
+		return visa_type;
 	}
 
 	public void setVisa_type(String visa_type) {
-		Visa_type = visa_type;
+		this.visa_type = visa_type;
 	}
 
 	public String getRate_term() {
@@ -122,38 +130,14 @@ public class Candidate {
 		this.reason = reason;
 	}
 
-	/*public Status getStatus() {
-		return status;
+	public List<StatusTbl> getStatustbl() {
+		return statustbl;
 	}
 
-	public void setStatus(Status status) {
-		this.status = status;
-	}*/
-
-	public Requisition getRequisition() {
-		return requisition;
+	public void setStatustbl(List<StatusTbl> statustbl) {
+		this.statustbl = statustbl;
 	}
 
-	public void setRequisition(Requisition requisition) {
-		this.requisition = requisition;
-	}
 
-	public Recruiter getRecruiter() {
-		return recruiter;
-	}
 
-	public void setRecruiter(Recruiter recruiter) {
-		this.recruiter = recruiter;
-	}
-
-	public List<Status> getStatus() {
-		return status;
-	}
-
-	public void setStatus(List<Status> status) {
-		this.status = status;
-	}
-	
-	
-		
 }

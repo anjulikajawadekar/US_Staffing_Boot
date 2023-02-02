@@ -12,34 +12,45 @@ import javax.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-public class Status {
+public class StatusTbl {
 
 	@Id
 	@Column(name = "status_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer status_id;
 	private String status;
+	private boolean flag;	
+
 	private LocalDate status_date;
-	private boolean flag;
-	public Status() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-	
-	@ManyToOne
-	@JoinColumn(name ="candidate_id")
-	private Candidate candidate;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "requisition_id")
 	private Requisition requisition;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "recruiter_id")
 	private Recruiter recruiter;
-	
-	
-	
+
+	@ManyToOne
+	@JoinColumn(name = "candidate_id")
+	private Candidate candidate;
+
+	public StatusTbl() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public StatusTbl(Integer status_id, String status, boolean flag, LocalDate status_date, Requisition requisition,
+			Recruiter recruiter, Candidate candidate) {
+		super();
+		this.status_id = status_id;
+		this.status = status;
+		this.flag = flag;
+		this.status_date = status_date;
+		this.requisition = requisition;
+		this.recruiter = recruiter;
+		this.candidate = candidate;
+	}
 
 	public Integer getStatus_id() {
 		return status_id;
@@ -65,14 +76,6 @@ public class Status {
 		this.status_date = status_date;
 	}
 
-	public Candidate getCandidate() {
-		return candidate;
-	}
-
-	public void setCandidate(Candidate candidate) {
-		this.candidate = candidate;
-	}
-
 	public Requisition getRequisition() {
 		return requisition;
 	}
@@ -89,6 +92,14 @@ public class Status {
 		this.recruiter = recruiter;
 	}
 
+	public Candidate getCandidate() {
+		return candidate;
+	}
+
+	public void setCandidate(Candidate candidate) {
+		this.candidate = candidate;
+	}
+
 	public boolean isFlag() {
 		return flag;
 	}
@@ -96,15 +107,4 @@ public class Status {
 	public void setFlag(boolean flag) {
 		this.flag = flag;
 	}
-	
-	
-	
-
-
-	
-	
-	
-	
-	
-	
 }

@@ -1,7 +1,6 @@
 package com.staffing.demo.entity;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,30 +29,35 @@ public class Requisition {
 	private String location;
 	private String position_type;
 	private String skills;
-	private String current_status;
+
+//	@ManyToMany(mappedBy = "likedRequistion")
+//    private List<Recruiter> recruiter;
+
+	@OneToMany(mappedBy = "requisition")
+	@JsonIgnore
+	private List<StatusTbl> statustbl;
+
 	public Requisition() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-
-
-//	@ManyToMany(mappedBy = "likedRequistion")
-//	private List<Recruiter> recruiter;
-
-	@ManyToOne
-	@JoinColumn(name = "empid")
-	private Recruiter recruiter;
-	
-	@OneToMany(mappedBy = "requisition")
-	@JsonIgnore
-	private List<Candidate> candidate;
-	
-	@OneToMany(mappedBy = "requisition")
-	@JsonIgnore
-	private List<Status> status;
-
-	
+	public Requisition(Integer requisition_id, String requisition_from, Integer id, String client, String job_title,
+			String duration, String client_rate, String location, String position_type, String skills,
+			List<StatusTbl> statustbl) {
+		super();
+		this.requisition_id = requisition_id;
+		this.requisition_from = requisition_from;
+		this.id = id;
+		this.client = client;
+		this.job_title = job_title;
+		this.duration = duration;
+		this.client_rate = client_rate;
+		this.location = location;
+		this.position_type = position_type;
+		this.skills = skills;
+		this.statustbl = statustbl;
+	}
 
 	public Integer getRequisition_id() {
 		return requisition_id;
@@ -135,49 +139,13 @@ public class Requisition {
 		this.skills = skills;
 	}
 
-	public Recruiter getRecruiter() {
-		return recruiter;
+	public List<StatusTbl> getStatustbl() {
+		return statustbl;
 	}
 
-	public void setRecruiter(Recruiter recruiter) {
-		this.recruiter = recruiter;
+	public void setStatustbl(List<StatusTbl> statustbl) {
+		this.statustbl = statustbl;
 	}
 
-	public List<Candidate> getCandidate() {
-		return candidate;
-	}
-
-	public void setCandidate(List<Candidate> candidate) {
-		this.candidate = candidate;
-	}
-
-	public List<Status> getStatus() {
-		return status;
-	}
-
-	public void setStatus(List<Status> status) {
-		this.status = status;
-	}
-
-	public String getCurrent_status() {
-		return current_status;
-	}
-
-	public void setCurrent_status(String current_status) {
-		this.current_status = current_status;
-	}
-
-
-//	@ManyToOne
-//	@JoinColumn(name = "candidate_id")
-//	private Candidate candidate;
-//
-//	@ManyToMany(mappedBy = "recruiter")
-//	@JsonIgnore
-//	private List<Recruiter> recruiters;
-//	
-//	@OneToMany(mappedBy = "candidate")
-//	@JsonIgnore
-//	private List<Candidate> candidates;
 
 }

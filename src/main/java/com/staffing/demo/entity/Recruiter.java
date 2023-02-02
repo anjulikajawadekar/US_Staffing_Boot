@@ -1,7 +1,6 @@
 package com.staffing.demo.entity;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,37 +19,39 @@ public class Recruiter {
 
 	@Id
 	@Column(name = "recruiter_id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer recruiter_id;
 	private String recruiter_name;
 	private String recruiter_email;
 	private String role;
 	private String password;
-	
+
+//	@ManyToMany
+//    @JoinTable(
+//      name = "requsition_recruiter", 
+//      joinColumns = @JoinColumn(name = "recruiter_id"), 
+//      inverseJoinColumns = @JoinColumn(name = "requisition_id"))
+//    private List<Requisition> likedRequistion;
+
 	@OneToMany(mappedBy = "recruiter")
 	@JsonIgnore
-	private List<Requisition> requisiton;
-	
-	@OneToMany(mappedBy = "recruiter")
-	@JsonIgnore
-	private List<Candidate> candidate;
-	
-	@OneToMany(mappedBy = "recruiter")
-	@JsonIgnore
-	private List<Status> status;
+	private List<StatusTbl> statustbl;
 
 	public Recruiter() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	/*
-	 * @ManyToMany
-	 * 
-	 * @JoinTable( name = "requsition_recruiter", joinColumns = @JoinColumn(name =
-	 * "recruiter_id"), inverseJoinColumns = @JoinColumn(name = "requisition_id"))
-	 * private List<Requisition> likedRequistion;
-	 */
+	public Recruiter(Integer recruiter_id, String recruiter_name, String recruiter_email, String role, String password,
+			List<StatusTbl> statustbl) {
+		super();
+		this.recruiter_id = recruiter_id;
+		this.recruiter_name = recruiter_name;
+		this.recruiter_email = recruiter_email;
+		this.role = role;
+		this.password = password;
+		this.statustbl = statustbl;
+	}
 
 	public Integer getRecruiter_id() {
 		return recruiter_id;
@@ -92,39 +93,14 @@ public class Recruiter {
 		this.password = password;
 	}
 
-	public List<Requisition> getRequisiton() {
-		return requisiton;
+	public List<StatusTbl> getStatustbl() {
+		return statustbl;
 	}
 
-	public void setRequisiton(List<Requisition> requisiton) {
-		this.requisiton = requisiton;
+	public void setStatustbl(List<StatusTbl> statustbl) {
+		this.statustbl = statustbl;
 	}
 
-	public List<Candidate> getCandidate() {
-		return candidate;
-	}
 
-	public void setCandidate(List<Candidate> candidate) {
-		this.candidate = candidate;
-	}
-
-	public List<Status> getStatus() {
-		return status;
-	}
-
-	public void setStatus(List<Status> status) {
-		this.status = status;
-	}
-	
-	
-
-	/*
-	 * public List<Requisition> getLikedRequistion() { return likedRequistion; }
-	 * 
-	 * 
-	 * 
-	 * public void setLikedRequistion(List<Requisition> likedRequistion) {
-	 * this.likedRequistion = likedRequistion; }
-	 */
 
 }
