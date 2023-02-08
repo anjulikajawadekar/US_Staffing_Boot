@@ -277,7 +277,6 @@ public class ServiceFirst {
 
 		cr.select(root).where((cb.equal(root.get("recruiter").get("recruiter_id"), recruiter_id)),
 				((cb.equal(root.get("requisition").get("requisition_id"), requisition_id))));
-//				(cb.equal(cb.function("YEAR", Integer.class, root.get("clo_date")), currentYear1)));
 
 		Query query = session.createQuery(cr);
 		List<StatusTbl> results = query.getResultList();
@@ -308,10 +307,8 @@ public class ServiceFirst {
 
 		for (Iterator<StatusTbl> i = results.iterator(); i.hasNext();) {
 
-			// database1 is an entity bean
 			StatusTbl x = (StatusTbl) i.next();
 			Candidate cid = x.getCandidate();
-
 			if (cid == null) {
 
 				int sid = x.getStatus_id();
@@ -327,16 +324,8 @@ public class ServiceFirst {
 				session.clear();
 			}
 
-//			st.setStatus(status);
-//			st.setStatus_date(now);
-//			rec.setRecruiter_id(recruiter_id);
-//			st.setRecruiter(rec);
-//			rq.setRequisition_id(requisition_id);
-//			st.setRequisition(rq);
-
 			System.out.println("Profile updated successful!");
 		}
-
 		session.close();
 		return results;
 	}
