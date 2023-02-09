@@ -35,14 +35,14 @@ public class ControllerFirst {
 		return "Hello there!!!!!!!!!!";
 	}
 
-	@GetMapping("/getAllRequisition")
-	public List<Requisition> getEMP_TM(HttpServletRequest request, HttpServletResponse response) {
-		return serviceFirst.GetAllRecords();
-	}
+//	@GetMapping("/getAllRequisition2")
+//	public List<Requisition> getEMP_TM(HttpServletRequest request, HttpServletResponse response) {
+//		return serviceFirst.GetAllRecords();
+//	}
 
-	@GetMapping("/getAllReq")
+	@GetMapping("/getAllRequisition")
 	public List<Requisition> getReq() {
-		return this.serviceFirst.getAllRec2();
+		return this.serviceFirst.getAllRequisition();
 	}
 
 	@GetMapping("/getAllRcruiter")
@@ -52,9 +52,8 @@ public class ControllerFirst {
 
 	@PostMapping(value = "/add_recruiter")
 	public ResponseEntity<?> AddRecr(@RequestParam String recruiter_name, @RequestParam String recruiter_email,
-			@RequestParam String role, @RequestParam String password) {
-		return serviceFirst.AddRecruiter(recruiter_name, recruiter_email, role, password);
-
+			 @RequestParam String password) {
+		return serviceFirst.AddRecruiter(recruiter_name, recruiter_email, password);
 	}
 
 	@PostMapping(value = "/add_requsition")
@@ -65,7 +64,6 @@ public class ControllerFirst {
 		
 		return serviceFirst.AddRequisition(requisition_from, id, client, job_title, duration, client_rate, location,
 				position_type, skills, recruiter_id);
-
 	}
 
 	@PostMapping(value = "/add_candidate")
@@ -85,12 +83,25 @@ public class ControllerFirst {
 		return serviceFirst.getStatusByTwoId(recruiter_id, requisition_id);
 	}
 
-	@PostMapping(value = "/updateStatus")
-	public List<StatusTbl> updateStatus(@RequestParam int recruiter_id, @RequestParam int requisition_id,
-			@RequestParam String status, @RequestParam int candidate_id) {
+	@PostMapping("/update_status")
+	public ResponseEntity<String> Update_status(@RequestParam int recruiter_id, @RequestParam int requisition_id,
+			@RequestParam int candidate_id, @RequestParam String status) {
+		System.out.println("hello");
 
-		return serviceFirst.UpdateStatusTbl(recruiter_id, requisition_id, status, candidate_id);
+		if (candidate_id == 0) {
+			return serviceFirst.Update_status1(recruiter_id, requisition_id, status);
+		} else {
+			return serviceFirst.Update_status2(recruiter_id, requisition_id, candidate_id, status);
+		}
+
 	}
+	
+//	@PostMapping(value = "/updateStatus")
+//	public List<StatusTbl> updateStatus(@RequestParam int recruiter_id, @RequestParam int requisition_id,
+//			@RequestParam String status, @RequestParam int candidate_id) {
+//
+//		return serviceFirst.UpdateStatusTbl(recruiter_id, requisition_id, status, candidate_id);
+//	}
 
 	/*@PostMapping(value = "/addStatus1")
 	public ResponseEntity<?> addStatus1(@RequestParam int recruiter_id, @RequestParam int requisition_id,
@@ -105,18 +116,5 @@ public class ControllerFirst {
 
 		return serviceFirst.AddStatus2(recruiter_id, requisition_id, candidate_id, status);
 	}*/
-
-	@PostMapping("/update_status")
-	public ResponseEntity<String> Update_status(@RequestParam int recruiter_id, @RequestParam int requisition_id,
-			@RequestParam int candidate_id, @RequestParam String status) {
-		System.out.println("hello");
-
-		if (candidate_id == 0) {
-			return serviceFirst.Update_status1(recruiter_id, requisition_id, status);
-		} else {
-			return serviceFirst.Update_status2(recruiter_id, requisition_id, candidate_id, status);
-		}
-
-	}
 
 }

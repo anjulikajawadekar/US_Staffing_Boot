@@ -17,6 +17,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -50,30 +51,35 @@ public class ServiceFirst {
 	LocalDate now = LocalDate.now();
 	DateTimeFormatter dtf_month = DateTimeFormatter.ofPattern("MMM-yyyy");
 
-	public List<Requisition> GetAllRecords() {
+//	public List<Requisition> GetAllRecords() {
+//
+//		Session session = sessionFactory.openSession();
+//		CriteriaBuilder cb = session.getCriteriaBuilder();
+//
+//		CriteriaQuery<Requisition> cr = cb.createQuery(Requisition.class);
+//		Root<Requisition> root = cr.from(Requisition.class);
+//
+//		Query query = session.createQuery(cr);
+//		List<Requisition> results = query.getResultList();
+//
+//		session.close();
+//		return results;
+//	}
 
-		Session session = sessionFactory.openSession();
-		CriteriaBuilder cb = session.getCriteriaBuilder();
-
-		CriteriaQuery<Requisition> cr = cb.createQuery(Requisition.class);
-		Root<Requisition> root = cr.from(Requisition.class);
-
-		Query query = session.createQuery(cr);
-		List<Requisition> results = query.getResultList();
-
-		session.close();
-		return results;
-	}
-
-	public List<Requisition> getAllRec2() {
+	public List<Requisition> getAllRequisition() {
 
 		return requisitionRepo.findAll();
+//		return requisitionRepo.findAll(Descending desc);
 	}
+	
+//	private Sort sortByIdAsc() {
+//        return new Sort(Sort.Direction.ASC, "requisition_id");
+//    }
 
-	public ResponseEntity<?> AddRecruiter(String recruiter_name, String recruiter_email, String role, String password) {
+	public ResponseEntity<?> AddRecruiter(String recruiter_name, String recruiter_email, String password) {
 
 		System.out.println(
-				"Value reach to Service" + recruiter_name + "  " + recruiter_email + " " + role + " " + password);
+				"Value reach to Service" + recruiter_name + "  " + recruiter_email + " " + password);
 
 		Session hbmsession = null;
 		Transaction transaction = null;
@@ -81,7 +87,7 @@ public class ServiceFirst {
 		rec.setRecruiter_name(recruiter_name);
 		rec.setRecruiter_email(recruiter_email);
 		rec.setPassword(password);
-		rec.setRole(role);
+		rec.setRole("TM");
 
 		hbmsession = sessionFactory.openSession();
 		transaction = hbmsession.beginTransaction();
@@ -185,47 +191,46 @@ public class ServiceFirst {
 		session.close();
 
 		return results;
-
 	}
 
 //	****************End get status by rec_id and rq_id*********************************************
 
-	public List<StatusTbl> UpdateStatusTbl(int recruiter_id, int requisition_id, String status, int candidate_id) {
-		// TODO Auto-generated method stub
-		Session session = sessionFactory.openSession();
-		Transaction transaction = session.beginTransaction();
-
-		CriteriaBuilder cb = session.getCriteriaBuilder();
-
-		CriteriaQuery<StatusTbl> cr = cb.createQuery(StatusTbl.class);
-		Root<StatusTbl> root = cr.from(StatusTbl.class);
-
-		cr.select(root).where((cb.equal(root.get("recruiter").get("recruiter_id"), recruiter_id)),
-				((cb.equal(root.get("requisition").get("requisition_id"), requisition_id))));
-
-		Query query = session.createQuery(cr);
-		List<StatusTbl> results = query.getResultList();
-
-		for (Iterator<StatusTbl> i = results.iterator(); i.hasNext();) {
-
-			StatusTbl x = (StatusTbl) i.next();
-			Candidate cid = x.getCandidate();
-			if (cid == null) {
-
-				int sid = x.getStatus_id();
-//				System.out.println("Status : " + x.getStatus_id());			
-				st.setStatus_id(sid);
-				st.setFlag(false);
-				session.saveOrUpdate(st);
-				session.flush();
-				session.clear();
-			}
-
-			System.out.println("Profile updated successful!");
-		}
-		session.close();
-		return results;
-	}
+//	public List<StatusTbl> UpdateStatusTbl(int recruiter_id, int requisition_id, String status, int candidate_id) {
+//		// TODO Auto-generated method stub
+//		Session session = sessionFactory.openSession();
+//		Transaction transaction = session.beginTransaction();
+//
+//		CriteriaBuilder cb = session.getCriteriaBuilder();
+//
+//		CriteriaQuery<StatusTbl> cr = cb.createQuery(StatusTbl.class);
+//		Root<StatusTbl> root = cr.from(StatusTbl.class);
+//
+//		cr.select(root).where((cb.equal(root.get("recruiter").get("recruiter_id"), recruiter_id)),
+//				((cb.equal(root.get("requisition").get("requisition_id"), requisition_id))));
+//
+//		Query query = session.createQuery(cr);
+//		List<StatusTbl> results = query.getResultList();
+//
+//		for (Iterator<StatusTbl> i = results.iterator(); i.hasNext();) {
+//
+//			StatusTbl x = (StatusTbl) i.next();
+//			Candidate cid = x.getCandidate();
+//			if (cid == null) {
+//
+//				int sid = x.getStatus_id();
+////				System.out.println("Status : " + x.getStatus_id());			
+//				st.setStatus_id(sid);
+//				st.setFlag(false);
+//				session.saveOrUpdate(st);
+//				session.flush();
+//				session.clear();
+//			}
+//
+//			System.out.println("Profile updated successful!");
+//		}
+//		session.close();
+//		return results;
+//	}
 
 	public void AddStatus1(int recruiter_id, int requisition_id, String status) {
 		// TODO Auto-generated method stub
