@@ -56,13 +56,8 @@ public class ControllerFirst {
 	}
 
 	@GetMapping("/getAllRequisition")
-	public List<Requisition> getEMP_TM(HttpServletRequest request, HttpServletResponse response) {
-		return serviceFirst.GetAllRecords();
-	}
-
-	@GetMapping("/getAllReq")
 	public List<Requisition> getReq() {
-		return this.serviceFirst.getAllRec2();
+		return this.serviceFirst.getAllRequisition();
 	}
 
 	@GetMapping("/getAllRcruiter")
@@ -72,9 +67,8 @@ public class ControllerFirst {
 
 	@PostMapping(value = "/add_recruiter")
 	public ResponseEntity<?> AddRecr(@RequestParam String recruiter_name, @RequestParam String recruiter_email,
-			@RequestParam String role, @RequestParam String password) {
-		return serviceFirst.AddRecruiter(recruiter_name, recruiter_email, role, password);
-
+			 @RequestParam String password) {
+		return serviceFirst.AddRecruiter(recruiter_name, recruiter_email, password);
 	}
 
 	@PostMapping(value = "/add_requsition")
@@ -85,7 +79,6 @@ public class ControllerFirst {
 
 		return serviceFirst.AddRequisition(requisition_from, id, client, job_title, duration, client_rate, location,
 				position_type, skills, recruiter_id);
-
 	}
 
 	@PostMapping(value = "/add_candidate")
