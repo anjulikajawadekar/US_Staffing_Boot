@@ -16,6 +16,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -130,8 +131,9 @@ public class ServiceFirst {
 	public List<Requisition> getAllRec2() {
 
 		return requisitionRepo.findAll();
+//		return requisitionRepo.findAll(Descending desc);
 	}
-	
+
 	
 	public List<StatusTbl> getAllStatus() {
 		Session session = sessionFactory.openSession();
@@ -151,10 +153,10 @@ public class ServiceFirst {
 		return results;
 	}
 
-	public ResponseEntity<?> AddRecruiter(String recruiter_name, String recruiter_email, String role, String password) {
+	public ResponseEntity<?> AddRecruiter(String recruiter_name, String recruiter_email, String password) {
 
 		System.out.println(
-				"Value reach to Service" + recruiter_name + "  " + recruiter_email + " " + role + " " + password);
+				"Value reach to Service" + recruiter_name + "  " + recruiter_email + " " + password);
 
 		Session hbmsession = null;
 		Transaction transaction = null;
@@ -162,7 +164,7 @@ public class ServiceFirst {
 		recruiter.setRecruiter_name(recruiter_name);
 		recruiter.setRecruiter_email(recruiter_email);
 		recruiter.setPassword(password);
-		recruiter.setRole(role);
+		recruiter.setRole("TM");
 
 		hbmsession = sessionFactory.openSession();
 		transaction = hbmsession.beginTransaction();
@@ -302,7 +304,6 @@ public class ServiceFirst {
 		session.close();
 
 		return results;
-
 	}
 
 //	****************End get status by rec_id and rq_id*********************************************

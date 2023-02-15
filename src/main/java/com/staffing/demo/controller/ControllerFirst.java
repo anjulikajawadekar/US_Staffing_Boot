@@ -82,8 +82,8 @@ public class ControllerFirst {
 
 	@PostMapping(value = "/add_recruiter")
 	public ResponseEntity<?> AddRecr(@RequestParam String recruiter_name, @RequestParam String recruiter_email,
-			@RequestParam String role, @RequestParam String password) {
-		return serviceFirst.AddRecruiter(recruiter_name, recruiter_email, role, password);
+			 @RequestParam String password) {
+		return serviceFirst.AddRecruiter(recruiter_name, recruiter_email,password);
 
 	}
 
