@@ -150,7 +150,7 @@ public class ServiceFirst {
 		recruiter.setRecruiter_name(recruiter_name);
 		recruiter.setRecruiter_email(recruiter_email);
 		recruiter.setPassword(password);
-		recruiter.setRole(role);
+		recruiter.setRole("TM");
 
 		hbmsession = sessionFactory.openSession();
 		transaction = hbmsession.beginTransaction();
@@ -231,6 +231,10 @@ public class ServiceFirst {
 			return new ResponseEntity<Requisition>(requisition, HttpStatus.OK);
 		}
 
+	}
+	
+	public List<Requisition> getAllRequisition(){
+		return requisitionRepo.findAll();
 	}
 
 	public ResponseEntity<?> AddCandidate(String candidate_name, String visa_type, String rate_term,
