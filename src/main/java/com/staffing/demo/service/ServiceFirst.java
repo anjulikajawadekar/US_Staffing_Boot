@@ -53,28 +53,30 @@ public class ServiceFirst {
 
 	@Autowired
 	StatusTblRepo statusTblRepo;
-
+	
 	@Autowired
-	ClientRepo clrepo;
-
+	ClientRepo clrepo; 
+	
 	@Autowired
 	DurationRepo drrepo;
-
+	
 	@Autowired
 	PositionTypeRepo ptrepo;
 
 	@Autowired
 	RateTermRepo rtrepo;
-
+	
 	@Autowired
 	Requisitor_fdRepo reqfdrepo;
-
+	
 	@Autowired
 	Status_fdRepo stfdrepo;
-
+	
 	@Autowired
 	VisaTypeRepo vtrepo;
-
+	
+	
+	
 	@Autowired
 	ServiceFirst serviceFirst;
 
@@ -85,7 +87,7 @@ public class ServiceFirst {
 	Requisition requisition = new Requisition();
 	StatusTbl statusTbl = new StatusTbl();
 	Candidate candidate = new Candidate();
-
+	
 	Client cl = new Client();
 	Duration dr = new Duration();
 	PositionType pt = new PositionType();
@@ -104,8 +106,7 @@ public class ServiceFirst {
 		CriteriaQuery<Recruiter> cr = cb.createQuery(Recruiter.class);
 		Root<Recruiter> root = cr.from(Recruiter.class);
 
-		cr.select(root).where(cb.equal(root.get("recruiter_email"), Username),
-				cb.equal(root.get("password"), Password));
+		cr.select(root).where(cb.equal(root.get("recruiter_email"), Username), cb.equal(root.get("password"), Password));
 
 		Query query = session.createQuery(cr);
 		Recruiter results = (Recruiter) query.getSingleResult();
@@ -133,25 +134,10 @@ public class ServiceFirst {
 		return requisitionRepo.findAll();
 //		return requisitionRepo.findAll(Descending desc);
 	}
-
 	
-	public List<StatusTbl> getAllStatus() {
-		Session session = sessionFactory.openSession();
-		CriteriaBuilder cb = session.getCriteriaBuilder();
-
-		CriteriaQuery<StatusTbl> cr = cb.createQuery(StatusTbl.class);
-		Root<StatusTbl> root = cr.from(StatusTbl.class);
-
-		cr.select(root).where((cb.equal(root.get("flag"), 1)));
-				
-
-		Query query = session.createQuery(cr);
-		List<StatusTbl> results = query.getResultList();
-		System.out.println(results);
-		session.close();
-
-		return results;
-	}
+//	private Sort sortByIdAsc() {
+//        return new Sort(Sort.Direction.ASC, "requisition_id");
+//    }
 
 	public ResponseEntity<?> AddRecruiter(String recruiter_name, String recruiter_email, String password) {
 
@@ -247,6 +233,10 @@ public class ServiceFirst {
 			return new ResponseEntity<Requisition>(requisition, HttpStatus.OK);
 		}
 
+	}
+	
+	public List<Requisition> getAllRequisition(){
+		return requisitionRepo.findAll();
 	}
 
 	public ResponseEntity<?> AddCandidate(String candidate_name, String visa_type, String rate_term,
@@ -430,7 +420,7 @@ public class ServiceFirst {
 		return ResponseEntity.ok("Status with candidate updated successful!");
 	}
 /////////////////
-
+	
 	public List<Client> getClient() {
 		Session session = sessionFactory.openSession();
 		CriteriaBuilder cb = session.getCriteriaBuilder();
@@ -460,24 +450,15 @@ public class ServiceFirst {
 	public Client UpdateClient(int client_id, String client_name) {
 		Session session = sessionFactory.openSession();
 		Transaction t = session.beginTransaction();
-		cl = clrepo.getById(client_id);
+		cl=clrepo.getById(client_id);
 		cl.setClient_name(client_name);
 		drrepo.save(dr);
 		t.commit();
 		session.close();
 		return null;
 	}
-
-	public Client DeleteClient(int client_id) {
-		Session session = sessionFactory.openSession();
-		Transaction t = session.beginTransaction();
-		cl = clrepo.getById(client_id);
-		clrepo.delete(cl);
-		t.commit();
-		session.close();
-		return null;
-	}
-
+	
+	
 	public List<Duration> getDuration() {
 		Session session = sessionFactory.openSession();
 		CriteriaBuilder cb = session.getCriteriaBuilder();
@@ -504,11 +485,10 @@ public class ServiceFirst {
 		session.close();
 		return null;
 	}
-
 	public Duration UpdateDuration(int duration_id, String duration) {
 		Session session = sessionFactory.openSession();
 		Transaction t = session.beginTransaction();
-		dr = drrepo.getById(duration_id);
+		dr=drrepo.getById(duration_id);
 		dr.setDuration(duration);
 		drrepo.save(dr);
 		t.commit();
@@ -516,15 +496,6 @@ public class ServiceFirst {
 		return null;
 	}
 
-	public Duration DeleteDuration(int duration_id) {
-		Session session = sessionFactory.openSession();
-		Transaction t = session.beginTransaction();
-		dr = drrepo.getById(duration_id);
-		drrepo.delete(dr);
-		t.commit();
-		session.close();
-		return null;
-	}
 
 	public List<PositionType> getAllPositionType() {
 		Session session = sessionFactory.openSession();
@@ -555,24 +526,14 @@ public class ServiceFirst {
 	public PositionType UpdatePositionType(int position_type_id, String position_type) {
 		Session session = sessionFactory.openSession();
 		Transaction t = session.beginTransaction();
-		pt = ptrepo.getById(position_type_id);
+		pt=ptrepo.getById(position_type_id);
 		pt.setPosition_type(position_type);
 		ptrepo.save(pt);
 		t.commit();
 		session.close();
 		return null;
 	}
-
-	public PositionType DeletePositionType(int position_type_id) {
-		Session session = sessionFactory.openSession();
-		Transaction t = session.beginTransaction();
-		pt = ptrepo.getById(position_type_id);
-		ptrepo.delete(pt);
-		t.commit();
-		session.close();
-		return null;
-	}
-
+	
 	public List<RateTerm> getAllRateTerm() {
 		Session session = sessionFactory.openSession();
 		CriteriaBuilder cb = session.getCriteriaBuilder();
@@ -598,28 +559,18 @@ public class ServiceFirst {
 		session.close();
 		return null;
 	}
-
+	
 	public RateTerm UpdateRateTerm(int rate_term_id, String rate_term) {
 		Session session = sessionFactory.openSession();
 		Transaction t = session.beginTransaction();
-		rt = rtrepo.getById(rate_term_id);
+		rt=rtrepo.getById(rate_term_id);
 		rt.setRate_term(rate_term);
 		rtrepo.save(rt);
 		t.commit();
 		session.close();
 		return null;
 	}
-
-	public RateTerm DeleteRateTerm(int rate_term_id) {
-		Session session = sessionFactory.openSession();
-		Transaction t = session.beginTransaction();
-		rt = rtrepo.getById(rate_term_id);
-		rtrepo.delete(rt);
-		t.commit();
-		session.close();
-		return null;
-	}
-
+	
 	public List<Requisitor_fd> getAllRequisitorFd() {
 		Session session = sessionFactory.openSession();
 		CriteriaBuilder cb = session.getCriteriaBuilder();
@@ -649,7 +600,7 @@ public class ServiceFirst {
 	public Requisitor_fd UpdateRequisitorFd(int requisitor_id, String requisitor_fd) {
 		Session session = sessionFactory.openSession();
 		Transaction t = session.beginTransaction();
-		reqfd = reqfdrepo.getById(requisitor_id);
+		reqfd=reqfdrepo.getById(requisitor_id);
 		reqfd.setRequisitor_fd(requisitor_fd);
 		reqfdrepo.save(reqfd);
 		t.commit();
@@ -657,15 +608,7 @@ public class ServiceFirst {
 		return null;
 	}
 
-	public Requisitor_fd DeleteRequisitorFd(int requisitor_id) {
-		Session session = sessionFactory.openSession();
-		Transaction t = session.beginTransaction();
-		reqfd = reqfdrepo.getById(requisitor_id);
-		reqfdrepo.delete(reqfd);
-		t.commit();
-		session.close();
-		return null;
-	}
+	
 
 	public List<Status_fd> getAllStatusFd() {
 		Session session = sessionFactory.openSession();
@@ -682,7 +625,6 @@ public class ServiceFirst {
 	}
 
 	public Status_fd AddStatusFd(String status_fd) {
-		System.out.println(status_fd);
 		Session session = sessionFactory.openSession();
 		Transaction transaction = session.beginTransaction();
 
@@ -692,23 +634,12 @@ public class ServiceFirst {
 		session.close();
 		return null;
 	}
-
 	public Status_fd UpdateStatusFd(int status_fd_id, String status_fd) {
 		Session session = sessionFactory.openSession();
 		Transaction t = session.beginTransaction();
-		stfd = stfdrepo.getById(status_fd_id);
+		stfd=stfdrepo.getById(status_fd_id);
 		stfd.setStatus_fd(status_fd);
 		stfdrepo.save(stfd);
-		t.commit();
-		session.close();
-		return null;
-	}
-
-	public Status_fd DeleteStatusFd(int status_fd_id) {
-		Session session = sessionFactory.openSession();
-		Transaction t = session.beginTransaction();
-		stfd = stfdrepo.getById(status_fd_id);
-		stfdrepo.delete(stfd);
 		t.commit();
 		session.close();
 		return null;
@@ -738,11 +669,11 @@ public class ServiceFirst {
 		session.close();
 		return null;
 	}
-
+	
 	public VisaType UpdateVisaType(int visa_type_id, String visa_type) {
 		Session session = sessionFactory.openSession();
 		Transaction t = session.beginTransaction();
-		vt = vtrepo.getById(visa_type_id);
+		vt=vtrepo.getById(visa_type_id);
 		vt.setVisa_type(visa_type);
 		vtrepo.save(vt);
 		t.commit();
@@ -750,15 +681,15 @@ public class ServiceFirst {
 		return null;
 	}
 
-	public VisaType DeleteVisaType(int visa_type_id) {
-		Session session = sessionFactory.openSession();
-		Transaction t = session.beginTransaction();
-		vt = vtrepo.getById(visa_type_id);
-		vtrepo.delete(vt);
-		t.commit();
-		session.close();
-		return null;
-	}
+	
+
+	
+	
+
+	
+
+
+	
 
 	
 
