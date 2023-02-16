@@ -192,6 +192,7 @@ public class ServiceFirst {
 
 			System.out.println("exist");
 			statusTbl.setStatus("Assigned");
+			statusTbl.setFlag(true);
 			statusTbl.setStatus_date(now);
 			recruiter.setRecruiter_id(recruiter_id);
 			statusTbl.setRecruiter(recruiter);
@@ -217,6 +218,7 @@ public class ServiceFirst {
 			requisition.setSkills(skills);
 
 			statusTbl.setStatus("Assigned");
+			statusTbl.setFlag(true);
 			statusTbl.setStatus_date(now);
 			recruiter.setRecruiter_id(recruiter_id);
 			statusTbl.setRecruiter(recruiter);
@@ -238,7 +240,7 @@ public class ServiceFirst {
 	}
 
 	public ResponseEntity<?> AddCandidate(String candidate_name, String visa_type, String rate_term,
-			String submitted_rate, String pnone, String email, String status, String remark, String reason,
+			String submitted_rate, String phone, String email, String status, String remark, String reason,
 			int recruiter_id, int requisition_id) {
 
 		Session hbmsession = null;
@@ -248,11 +250,18 @@ public class ServiceFirst {
 		candidate.setVisa_type(visa_type);
 		candidate.setRate_term(rate_term);
 		candidate.setSubmitted_rate(submitted_rate);
-		candidate.setPnone(pnone);
+		candidate.setPhone(phone);
 		candidate.setEmail(email);
 		candidate.setRemark(remark);
 		candidate.setReason(reason);
-
+		
+		recruiter.setRecruiter_id(recruiter_id);
+		candidate.setRecruiter(recruiter);
+		
+		requisition.setRequisition_id(requisition_id);
+		candidate.setRequisition(requisition);
+		
+		
 		hbmsession = sessionFactory.openSession();
 		transaction = hbmsession.beginTransaction();
 //		hbmsession.save(cd);
@@ -262,6 +271,7 @@ public class ServiceFirst {
 		statusTbl.setStatus_date(now);
 		recruiter.setRecruiter_id(recruiter_id);
 		statusTbl.setRecruiter(recruiter);
+		statusTbl.setFlag(true);
 		requisition.setRequisition_id(requisition_id);
 		statusTbl.setRequisition(requisition);
 
@@ -298,7 +308,7 @@ public class ServiceFirst {
 
 //	****************End get status by rec_id and rq_id*********************************************
 
-	public List<StatusTbl> UpdateStatusTbl(int recruiter_id, int requisition_id, String status, int candidate_id) {
+	/*public List<StatusTbl> UpdateStatusTbl(int recruiter_id, int requisition_id, String status, int candidate_id) {
 		// TODO Auto-generated method stub
 		Session session = sessionFactory.openSession();
 		Transaction transaction = session.beginTransaction();
@@ -337,11 +347,11 @@ public class ServiceFirst {
 		}
 		session.close();
 		return results;
-	}
+	}*/
 
 	public void AddStatus1(int recruiter_id, int requisition_id, String status) {
 		// TODO Auto-generated method stub
-
+		System.out.println("Addstatus1");
 		Session session = sessionFactory.openSession();
 		Transaction transaction = session.beginTransaction();
 
@@ -352,11 +362,16 @@ public class ServiceFirst {
 		requisition.setRequisition_id(requisition_id);
 		statusTbl.setRequisition(requisition);
 		statusTbl.setFlag(true);
-
+	
+		System.out.println(statusTbl.getCandidate());
 		session.save(statusTbl);
+		
 		System.out.println("Status without candidate updated successful!");
 
 		transaction.commit();
+	
+	//	statusTbl.setFlag(false);
+		//session.remove(statusTbl);
 		session.close();
 		// return new ResponseEntity<StatusTbl>(st, HttpStatus.OK);
 
@@ -365,7 +380,7 @@ public class ServiceFirst {
 	public void AddStatus2(int recruiter_id, int requisition_id, int candidate_id, String status) {
 		Session session = sessionFactory.openSession();
 		Transaction transaction = session.beginTransaction();
-
+		System.out.println("Addstatus2");
 		statusTbl.setStatus(status);
 		statusTbl.setStatus_date(now);
 		recruiter.setRecruiter_id(recruiter_id);
@@ -378,23 +393,27 @@ public class ServiceFirst {
 
 		System.out.println("Status with Candidate updated successful!");
 		session.save(statusTbl);
-
+		
+	
 		transaction.commit();
+		statusTbl.setCandidate(null);
+	
+		//session.remove(statusTbl);
 		session.close();
-
 		// return new ResponseEntity<StatusTbl>(st, HttpStatus.OK);
 
 	}
 
 	public ResponseEntity<String> Update_status1(int recruiter_id, int requisition_id, String status) {
-
-		statusTblRepo.setEnabledFalse1(recruiter_id, requisition_id);
+		System.out.println("Update_status1");
+		statusTblRepo.setEnabledFalse2(recruiter_id, requisition_id,0);
 		AddStatus1(recruiter_id, requisition_id, status);
 		return ResponseEntity.ok("Status without candidate updated successful!");
 	}
 
 	public ResponseEntity<String> Update_status2(int recruiter_id, int requisition_id, int candidate_id,
 			String status) {
+		System.out.println("Update_status2");
 		statusTblRepo.setEnabledFalse2(recruiter_id, requisition_id, candidate_id);
 
 		AddStatus2(recruiter_id, requisition_id, candidate_id, status);

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.staffing.demo.entity.Candidate;
 import com.staffing.demo.entity.Recruiter;
 import com.staffing.demo.entity.Requisition;
 import com.staffing.demo.entity.StatusTbl;
@@ -25,6 +26,7 @@ import com.staffing.demo.entity_fd.RateTerm;
 import com.staffing.demo.entity_fd.Requisitor_fd;
 import com.staffing.demo.entity_fd.Status_fd;
 import com.staffing.demo.entity_fd.VisaType;
+import com.staffing.demo.repository.CandidateRepo;
 import com.staffing.demo.repository.RecruiterRepo;
 import com.staffing.demo.service.ServiceFirst;
 
@@ -37,6 +39,12 @@ public class ControllerFirst {
 
 	@Autowired
 	RecruiterRepo recruiterRepo;
+	
+	@Autowired
+	StatusTblRepo statustblRepo;
+	
+	@Autowired
+	CandidateRepo candidateRepo;
 
 	@GetMapping("/home")
 	public String home() {
@@ -64,6 +72,16 @@ public class ControllerFirst {
 	public List<Recruiter> getRec() {
 		return recruiterRepo.findAll();
 	}
+	
+	@GetMapping("/getAllCandidate")
+	public List<Candidate> getAllCandidate() {
+		return candidateRepo.findAll();
+	}
+	
+	@GetMapping("/getAllStatus")
+	public List<StatusTbl> getAllStatus() {
+		return serviceFirst.getAllStatus();
+	}
 
 	@PostMapping(value = "/add_recruiter")
 	public ResponseEntity<?> AddRecr(@RequestParam String recruiter_name, @RequestParam String recruiter_email,
@@ -83,11 +101,11 @@ public class ControllerFirst {
 
 	@PostMapping(value = "/add_candidate")
 	public ResponseEntity<?> AddCandi(@RequestParam String candidate_name, @RequestParam String visa_type,
-			@RequestParam String rate_term, @RequestParam String submitted_rate, @RequestParam String pnone,
+			@RequestParam String rate_term, @RequestParam String submitted_rate, @RequestParam String phone,
 			@RequestParam String email, @RequestParam String status, @RequestParam String remark,
 			@RequestParam String reason, @RequestParam int recruiter_id, @RequestParam int requisition_id) {
 
-		return serviceFirst.AddCandidate(candidate_name, visa_type, rate_term, submitted_rate, pnone, email, status,
+		return serviceFirst.AddCandidate(candidate_name, visa_type, rate_term, submitted_rate, phone, email, status,
 				remark, reason, recruiter_id, requisition_id);
 
 	}
@@ -98,12 +116,12 @@ public class ControllerFirst {
 		return serviceFirst.getStatusByTwoId(recruiter_id, requisition_id);
 	}
 
-	@PostMapping(value = "/updateStatus")
-	public List<StatusTbl> updateStatus(@RequestParam int recruiter_id, @RequestParam int requisition_id,
-			@RequestParam String status, @RequestParam int candidate_id) {
-
-		return serviceFirst.UpdateStatusTbl(recruiter_id, requisition_id, status, candidate_id);
-	}
+//	@PostMapping(value = "/updateStatus")
+//	public List<StatusTbl> updateStatus(@RequestParam int recruiter_id, @RequestParam int requisition_id,
+//			@RequestParam String status, @RequestParam int candidate_id) {
+//
+//		return serviceFirst.UpdateStatusTbl(recruiter_id, requisition_id, status, candidate_id);
+//	}
 
 	/*
 	 * @PostMapping(value = "/addStatus1") public ResponseEntity<?>
@@ -122,16 +140,39 @@ public class ControllerFirst {
 	 * status); }
 	 */
 
-	@PostMapping("/update_status")
-	public ResponseEntity<String> Update_status(@RequestParam int recruiter_id, @RequestParam int requisition_id,
+	
+	
+//	@PostMapping("/update_status")
+//	public ResponseEntity<String> Update_status(@RequestParam int recruiter_id, @RequestParam int requisition_id,
+//			@RequestParam int candidate_id, @RequestParam String status) {
+//		System.out.println("hello");
+//
+//		if (candidate_id == 0) {
+//			return serviceFirst.Update_status1(recruiter_id, requisition_id, status);
+//		} else {
+//			return serviceFirst.Update_status2(recruiter_id, requisition_id, candidate_id, status);
+//		}
+//
+//	}
+	
+	@PostMapping("/update_status1")
+	public ResponseEntity<String> Update_status1(@RequestParam int recruiter_id, @RequestParam int requisition_id,
+			 @RequestParam String status) {
+		System.out.println("update_status1");
+		
+	
+			return serviceFirst.Update_status1(recruiter_id, requisition_id,  status);
+		 
+	}
+	
+	@PostMapping("/update_status2")
+	public ResponseEntity<String> Update_status2(@RequestParam int recruiter_id, @RequestParam int requisition_id,
 			@RequestParam int candidate_id, @RequestParam String status) {
-		System.out.println("hello");
+		System.out.println("update_status2");
 
-		if (candidate_id == 0) {
-			return serviceFirst.Update_status1(recruiter_id, requisition_id, status);
-		} else {
+	
 			return serviceFirst.Update_status2(recruiter_id, requisition_id, candidate_id, status);
-		}
+		
 
 	}
 
