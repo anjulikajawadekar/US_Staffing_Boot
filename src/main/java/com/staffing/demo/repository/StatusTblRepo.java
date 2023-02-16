@@ -19,6 +19,6 @@ public interface StatusTblRepo extends JpaRepository<StatusTbl, Integer> {
 	@Modifying
 	@Transactional
 	@Query("UPDATE StatusTbl st  SET st.flag = false where requisition_id=:requisiton_id "
-			+ "and recruiter_id=:recruiter_id and candidate_id=:candidate_id")
+			+ "and recruiter_id=:recruiter_id and candidate_id is null or candidate_id=:candidate_id")
 	void setEnabledFalse2(int recruiter_id,int requisiton_id,  int candidate_id);
 }

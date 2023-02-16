@@ -36,6 +36,10 @@ public class Recruiter {
 
 	@OneToMany(mappedBy = "recruiter")
 	@JsonIgnore
+	private List<Candidate> candidate;
+
+	@OneToMany(mappedBy = "recruiter")
+	@JsonIgnore
 	private List<StatusTbl> statustbl;
 
 	public Recruiter() {
@@ -44,13 +48,14 @@ public class Recruiter {
 	}
 
 	public Recruiter(Integer recruiter_id, String recruiter_name, String recruiter_email, String role, String password,
-			List<StatusTbl> statustbl) {
+			List<Candidate> candidate, List<StatusTbl> statustbl) {
 		super();
 		this.recruiter_id = recruiter_id;
 		this.recruiter_name = recruiter_name;
 		this.recruiter_email = recruiter_email;
 		this.role = role;
 		this.password = password;
+		this.candidate = candidate;
 		this.statustbl = statustbl;
 	}
 
@@ -94,6 +99,14 @@ public class Recruiter {
 		this.password = password;
 	}
 
+	public List<Candidate> getCandidate() {
+		return candidate;
+	}
+
+	public void setCandidate(List<Candidate> candidate) {
+		this.candidate = candidate;
+	}
+
 	public List<StatusTbl> getStatustbl() {
 		return statustbl;
 	}
@@ -101,7 +114,5 @@ public class Recruiter {
 	public void setStatustbl(List<StatusTbl> statustbl) {
 		this.statustbl = statustbl;
 	}
-
-
 
 }

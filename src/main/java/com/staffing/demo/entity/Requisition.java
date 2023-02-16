@@ -38,14 +38,22 @@ public class Requisition {
 	@JsonIgnore
 	private List<StatusTbl> statustbl;
 
+	@OneToMany(mappedBy = "requisition")
+	@JsonIgnore
+	private List<Candidate> candidate;
+
 	public Requisition() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
+	public Integer getRequisition_id() {
+		return requisition_id;
+	}
+
 	public Requisition(Integer requisition_id, String requisition_from, Integer id, String client, String job_title,
 			String duration, String client_rate, String location, String position_type, String skills,
-			List<StatusTbl> statustbl) {
+			List<StatusTbl> statustbl, List<Candidate> candidate) {
 		super();
 		this.requisition_id = requisition_id;
 		this.requisition_from = requisition_from;
@@ -58,10 +66,7 @@ public class Requisition {
 		this.position_type = position_type;
 		this.skills = skills;
 		this.statustbl = statustbl;
-	}
-
-	public Integer getRequisition_id() {
-		return requisition_id;
+		this.candidate = candidate;
 	}
 
 	public void setRequisition_id(Integer requisition_id) {
@@ -148,5 +153,12 @@ public class Requisition {
 		this.statustbl = statustbl;
 	}
 
+	public List<Candidate> getCandidate() {
+		return candidate;
+	}
+
+	public void setCandidate(List<Candidate> candidate) {
+		this.candidate = candidate;
+	}
 
 }

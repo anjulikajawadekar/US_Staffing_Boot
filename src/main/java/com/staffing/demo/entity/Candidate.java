@@ -25,7 +25,7 @@ public class Candidate {
 	private String visa_type;
 	private String rate_term;
 	private String submitted_rate;
-	private String pnone;
+	private String phone;
 	private String email;
 	private String remark;
 	private String reason;
@@ -33,6 +33,14 @@ public class Candidate {
 //	@ManyToMany
 //	@JoinTable(name = "requsition_candidate", joinColumns = @JoinColumn(name = "candidate_id"), inverseJoinColumns = @JoinColumn(name = "requisition_id"))
 //	private List<Requisition> candidateRequistion;
+
+	@ManyToOne
+	@JoinColumn(name = "recruiter_id")
+	private Recruiter recruiter;
+
+	@ManyToOne
+	@JoinColumn(name = "requisition_id")
+	private Requisition requisition;
 
 	@OneToMany(mappedBy = "candidate")
 	@JsonIgnore
@@ -44,17 +52,20 @@ public class Candidate {
 	}
 
 	public Candidate(Integer candidate_id, String candidate_name, String visa_type, String rate_term,
-			String submitted_rate, String pnone, String email, String remark, String reason, List<StatusTbl> statustbl) {
+			String submitted_rate, String phone, String email, String remark, String reason, Recruiter recruiter,
+			Requisition requisition, List<StatusTbl> statustbl) {
 		super();
 		this.candidate_id = candidate_id;
 		this.candidate_name = candidate_name;
 		this.visa_type = visa_type;
 		this.rate_term = rate_term;
 		this.submitted_rate = submitted_rate;
-		this.pnone = pnone;
+		this.phone = phone;
 		this.email = email;
 		this.remark = remark;
 		this.reason = reason;
+		this.recruiter = recruiter;
+		this.requisition = requisition;
 		this.statustbl = statustbl;
 	}
 
@@ -98,12 +109,12 @@ public class Candidate {
 		this.submitted_rate = submitted_rate;
 	}
 
-	public String getPnone() {
-		return pnone;
+	public String getPhone() {
+		return phone;
 	}
 
-	public void setPnone(String pnone) {
-		this.pnone = pnone;
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 	public String getEmail() {
@@ -130,6 +141,14 @@ public class Candidate {
 		this.reason = reason;
 	}
 
+	public Recruiter getRecruiter() {
+		return recruiter;
+	}
+
+	public void setRecruiter(Recruiter recruiter) {
+		this.recruiter = recruiter;
+	}
+
 	public List<StatusTbl> getStatustbl() {
 		return statustbl;
 	}
@@ -138,6 +157,12 @@ public class Candidate {
 		this.statustbl = statustbl;
 	}
 
+	public Requisition getRequisition() {
+		return requisition;
+	}
 
+	public void setRequisition(Requisition requisition) {
+		this.requisition = requisition;
+	}
 
 }
