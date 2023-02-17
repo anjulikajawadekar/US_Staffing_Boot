@@ -28,6 +28,7 @@ import com.staffing.demo.entity_fd.Status_fd;
 import com.staffing.demo.entity_fd.VisaType;
 import com.staffing.demo.repository.CandidateRepo;
 import com.staffing.demo.repository.RecruiterRepo;
+import com.staffing.demo.repository.StatusTblRepo;
 import com.staffing.demo.service.ServiceFirst;
 
 @CrossOrigin
@@ -80,7 +81,7 @@ public class ControllerFirst {
 	
 	@GetMapping("/getAllStatus")
 	public List<StatusTbl> getAllStatus() {
-		return serviceFirst.getAllStatus();
+		return statustblRepo.findAll();
 	}
 
 	@PostMapping(value = "/add_recruiter")
