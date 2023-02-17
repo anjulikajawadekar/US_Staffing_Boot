@@ -99,7 +99,7 @@ public class ControllerFirst {
 
 	@GetMapping("/getAllStatus")
 	public List<StatusTbl> getAllStatus() {
-		return serviceFirst.getAllStatus();
+		return statustblRepo.findAll();
 	}
 
 	@PostMapping(value = "/add_recruiter")
