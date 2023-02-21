@@ -20,8 +20,8 @@ public class StatusTbl {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer status_id;
 	private String status;
-	private boolean flag;	
-
+	private boolean flag;
+	private boolean requisitionflag;
 	private LocalDate status_date;
 
 	@ManyToOne
@@ -41,12 +41,13 @@ public class StatusTbl {
 		// TODO Auto-generated constructor stub
 	}
 
-	public StatusTbl(Integer status_id, String status, boolean flag, LocalDate status_date, Requisition requisition,
-			Recruiter recruiter, Candidate candidate) {
+	public StatusTbl(Integer status_id, String status, boolean flag, boolean requisitionflag, LocalDate status_date,
+			Requisition requisition, Recruiter recruiter, Candidate candidate) {
 		super();
 		this.status_id = status_id;
 		this.status = status;
 		this.flag = flag;
+		this.requisitionflag = requisitionflag;
 		this.status_date = status_date;
 		this.requisition = requisition;
 		this.recruiter = recruiter;
@@ -108,4 +109,13 @@ public class StatusTbl {
 	public void setFlag(boolean flag) {
 		this.flag = flag;
 	}
+
+	public boolean isRequisitionflag() {
+		return requisitionflag;
+	}
+
+	public void setRequisitionflag(boolean requisitionflag) {
+		this.requisitionflag = requisitionflag;
+	}
+
 }
