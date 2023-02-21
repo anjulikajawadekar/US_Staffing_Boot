@@ -67,11 +67,11 @@ public class ControllerFirst {
 
 	@GetMapping("/getAllRequisition")
 	public List<Requisition> getEMP_TM(HttpServletRequest request, HttpServletResponse response) {
-		return serviceFirst.GetAllRecords();
+		return serviceFirst.getAllRec2();
 	}
 	
 	@GetMapping("/getRequisitionByID")
-	public List<Requisition> getRquisitionByID(HttpServletRequest request, HttpServletResponse response,
+	public Requisition getRquisitionByID(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam Integer ID){
 		return serviceFirst.getRecByID(ID);
 	}
@@ -97,6 +97,12 @@ public class ControllerFirst {
 		return candidateRepo.findAll();
 	}
 
+	@GetMapping("/getCandidateByID")
+	public Candidate getCandidateByID(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam Integer candidateID){
+		return serviceFirst.getCandidateByID(candidateID);
+	}
+	
 	@GetMapping("/getAllStatus")
 	public List<StatusTbl> getAllStatus() {
 		return statustblRepo.findAll();
@@ -139,6 +145,16 @@ public class ControllerFirst {
 
 		return serviceFirst.AddCandidate(candidate_name, visa_type, rate_term, submitted_rate, phone, email, status,
 				remark, reason, recruiter_id, requisition_id);
+
+	}
+	
+	@PutMapping(value = "/update_candidate")
+	public ResponseEntity<?> UpdateCandidate(@RequestParam Integer candidate_id, @RequestParam String candidate_name, @RequestParam String visa_type,
+			@RequestParam String rate_term, @RequestParam String submitted_rate, @RequestParam String phone,
+			@RequestParam String email, @RequestParam String remark, @RequestParam String reason) {
+
+		return serviceFirst.updateCandidate(candidate_id, candidate_name, visa_type, rate_term, 
+				submitted_rate, phone, email, remark, reason);
 
 	}
 
