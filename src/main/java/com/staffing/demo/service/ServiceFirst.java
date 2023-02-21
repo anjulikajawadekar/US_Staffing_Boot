@@ -32,6 +32,7 @@ import com.staffing.demo.entity_fd.RateTerm;
 import com.staffing.demo.entity_fd.Requisitor_fd;
 import com.staffing.demo.entity_fd.Status_fd;
 import com.staffing.demo.entity_fd.VisaType;
+import com.staffing.demo.repository.CandidateRepo;
 import com.staffing.demo.repository.ClientRepo;
 import com.staffing.demo.repository.DurationRepo;
 import com.staffing.demo.repository.PositionTypeRepo;
@@ -77,6 +78,9 @@ public class ServiceFirst {
 
 	@Autowired
 	ServiceFirst serviceFirst;
+	
+	@Autowired
+	CandidateRepo candidateRepo;
 
 //	@Autowired
 //	private EntityManager entityManager;
@@ -140,7 +144,7 @@ public class ServiceFirst {
 //		return requisitionRepo.findAll(Descending desc);
 	}
 
-	public List<Requisition> getRecByID(Integer ID) {
+	public Requisition getRecByID(Integer ID) {
 		Session session = null;
 		Transaction transaction = null;
 
@@ -150,11 +154,12 @@ public class ServiceFirst {
 		CriteriaQuery<Requisition> cr = cb.createQuery(Requisition.class);
 		Root<Requisition> root = cr.from(Requisition.class);
 
-//		cr.select(root).where((cb.equal(root.get("flag"), 1)));
 		cr.select(root).where(cb.equal(root.get("id"), ID));
 
 		Query query = session.createQuery(cr);
-		List<Requisition> results = query.getResultList();
+		Requisition results = null;
+//		results = query.getResultList();
+		results = (Requisition) query.getSingleResult();
 		System.out.println(results);
 		session.close();
 
@@ -164,6 +169,12 @@ public class ServiceFirst {
 	public Requisition getReqByReqID(Integer requisitionID) {
 
 		return requisitionRepo.getById(requisitionID);
+
+	}
+	
+	public Candidate getCandidateByID(Integer candidateID) {
+
+		return candidateRepo.getById(candidateID);
 
 	}
 
@@ -274,7 +285,7 @@ public class ServiceFirst {
 			requisition.setPosition_type(position_type);
 			requisition.setSkills(skills);
 
-			candidate.setCandidate_id(10);
+//			candidate.setCandidate_id(10);
 
 			statusTbl.setStatus("Assigned");
 			statusTbl.setStatus_date(now);
@@ -282,7 +293,7 @@ public class ServiceFirst {
 			statusTbl.setRecruiter(recruiter);
 			statusTbl.setRequisition(requisition);
 			statusTbl.setFlag(true);
-			statusTbl.setCandidate(candidate);
+//			statusTbl.setCandidate(candidate);
 			session.save(statusTbl);
 
 			session.save(requisition);
@@ -303,10 +314,7 @@ public class ServiceFirst {
 
 		Session session = null;
 		Transaction transaction = null;
-
-
-
-
+		
 		requisition = requisitionRepo.getById(requisition_id);
 
 		requisition.setRequisition_from(requisition_from);
@@ -328,81 +336,6 @@ public class ServiceFirst {
 
 		return new ResponseEntity<Requisition>(requisition, HttpStatus.OK);
 	}
-
-/*	public ResponseEntity<?> AddRequisition2(String requisition_from, Integer id, String client, String job_title,
-			String duration, String client_rate, String location, String position_type, String skills,
-			int recruiter_id) {
-
-		Session session = null;
-		Transaction transaction = null;
-		
-		session = sessionFactory.openSession();
-		transaction = session.beginTransaction();
-
-		Criteria crt = session.createCriteria(Requisition.class);
-		crt.add(Restrictions.eq("id", id));
-
-		Requisition z = (Requisition) crt.uniqueResult();
-		System.out.print("z = " + z.getRequisition_id());
-
-		if (z != null) {
-			int a = z.getRequisition_id();
-			Criteria crt1 = session.createCriteria(StatusTbl.class);
-			crt1.add(Restrictions.eq("recruiter.recruiter_id", recruiter_id));
-			crt1.add(Restrictions.eq("status", "Assigned"));
-			crt1.add(Restrictions.eq("requisition.requisition_id", a));
-			System.out.println(a);
-			StatusTbl z1 = (StatusTbl) crt1.uniqueResult();
-
-			if (z1 != null) {
-				System.out.println("record exists");
-				return new ResponseEntity<StatusTbl>(z1, HttpStatus.OK);
-			}
-
-			System.out.println("exist");
-			statusTbl.setStatus("Assigned");
-			statusTbl.setFlag(true);
-			statusTbl.setStatus_date(now);
-			recruiter.setRecruiter_id(recruiter_id);
-			statusTbl.setRecruiter(recruiter);
-			statusTbl.setRequisition(requisition);
-
-			session.save(statusTbl);
-
-			transaction.commit();
-			session.close();
-
-			return new ResponseEntity<Requisition>(requisition, HttpStatus.OK);
-
-		} else {
-			System.out.println("no exist");
-			requisition.setRequisition_from(requisition_from);
-			requisition.setId(id);
-			requisition.setClient(client);
-			requisition.setJob_title(job_title);
-			requisition.setDuration(duration);
-			requisition.setClient_rate(client_rate);
-			requisition.setLocation(location);
-			requisition.setPosition_type(position_type);
-			requisition.setSkills(skills);
-
-			statusTbl.setStatus("Assigned");
-			statusTbl.setFlag(true);
-			statusTbl.setStatus_date(now);
-			recruiter.setRecruiter_id(recruiter_id);
-			statusTbl.setRecruiter(recruiter);
-			statusTbl.setRequisition(requisition);
-			statusTbl.setFlag(true);
-
-			session.save(requisition);
-			session.save(statusTbl);
-
-			transaction.commit();
-			session.close();
-
-			return new ResponseEntity<Requisition>(requisition, HttpStatus.OK);
-		}
-	}*/
 
 	public List<Requisition> getAllRequisition() {
 		return requisitionRepo.findAll();
@@ -435,7 +368,7 @@ public class ServiceFirst {
 //		session.save(cd);
 		int candi2 = (Integer) session.save(candidate);
 
-		statusTbl.setStatus(status);
+		statusTbl.setStatus("Candidate Screening");
 		statusTbl.setStatus_date(now);
 		recruiter.setRecruiter_id(recruiter_id);
 		statusTbl.setRecruiter(recruiter);
@@ -453,6 +386,35 @@ public class ServiceFirst {
 
 		return new ResponseEntity<Candidate>(candidate, HttpStatus.OK);
 	}
+	
+	public ResponseEntity<?> updateCandidate(Integer candidate_id, String candidate_name, String visa_type, String rate_term,
+			String submitted_rate, String phone, String email, String remark, String reason
+			) {
+
+		Session session = null;
+		Transaction transaction = null;
+		
+		candidate = candidateRepo.getById(candidate_id);
+
+		candidate.setCandidate_name(candidate_name);
+		candidate.setVisa_type(visa_type);
+		candidate.setRate_term(rate_term);
+		candidate.setSubmitted_rate(submitted_rate);
+		candidate.setPhone(phone);
+		candidate.setEmail(email);
+		candidate.setRemark(remark);
+		candidate.setReason(reason);
+		session = sessionFactory.openSession();
+		transaction = session.beginTransaction();
+		candidateRepo.save(candidate);
+
+		transaction.commit();
+		session.close();
+		System.out.println("Candidate updated");
+
+		return new ResponseEntity<Candidate>(candidate, HttpStatus.OK);
+	}
+
 
 //	****************get status by rec_id and rq_id*********************************************
 	public List<StatusTbl> getStatusByTwoId(int recruiter_id, int requisition_id) {
