@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -31,9 +32,16 @@ public class Requisition {
 	private String position_type;
 	private String skills;
 
-//	@ManyToMany(mappedBy = "likedRequistion")
+//	@ManyToMany(mappedBy = "likedRequistion",cascade = { CascadeType.ALL })
+//	@JsonIgnore
 //    private List<Recruiter> recruiter;
 
+//	@ManyToMany()
+//	@JoinTable(name = "requsition_recruiter", joinColumns = @JoinColumn(name = "requisition_id"), inverseJoinColumns = @JoinColumn(name = "recruiter_id"))
+//	private List<Recruiter> likedRecruiter;
+
+	
+	
 	@OneToMany(mappedBy = "requisition")
 	@JsonIgnore
 	private List<StatusTbl> statustbl;
@@ -47,9 +55,9 @@ public class Requisition {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Integer getRequisition_id() {
-		return requisition_id;
-	}
+	
+	
+	
 
 	public Requisition(Integer requisition_id, String requisition_from, Integer id, String client, String job_title,
 			String duration, String client_rate, String location, String position_type, String skills,
@@ -67,6 +75,14 @@ public class Requisition {
 		this.skills = skills;
 		this.statustbl = statustbl;
 		this.candidate = candidate;
+	}
+
+
+
+
+
+	public Integer getRequisition_id() {
+		return requisition_id;
 	}
 
 	public void setRequisition_id(Integer requisition_id) {
@@ -160,5 +176,8 @@ public class Requisition {
 	public void setCandidate(List<Candidate> candidate) {
 		this.candidate = candidate;
 	}
+
+
+
 
 }

@@ -27,12 +27,13 @@ public class Recruiter {
 	private String role;
 	private String password;
 
-//	@ManyToMany
-//    @JoinTable(
-//      name = "requsition_recruiter", 
-//      joinColumns = @JoinColumn(name = "recruiter_id"), 
-//      inverseJoinColumns = @JoinColumn(name = "requisition_id"))
-//    private List<Requisition> likedRequistion;
+//	@ManyToMany(cascade = { CascadeType.ALL })
+//	@JoinTable(name = "requsition_recruiter", joinColumns = @JoinColumn(name = "recruiter_id"), inverseJoinColumns = @JoinColumn(name = "requisition_id"))
+//	private List<Requisition> likedRequistion;
+
+//	@ManyToMany(mappedBy = "likedRecruiter")
+//	@JsonIgnore
+//	private List<Requisition> requisition;
 
 	@OneToMany(mappedBy = "recruiter")
 	@JsonIgnore
@@ -47,6 +48,8 @@ public class Recruiter {
 		// TODO Auto-generated constructor stub
 	}
 
+	
+
 	public Recruiter(Integer recruiter_id, String recruiter_name, String recruiter_email, String role, String password,
 			List<Candidate> candidate, List<StatusTbl> statustbl) {
 		super();
@@ -58,6 +61,8 @@ public class Recruiter {
 		this.candidate = candidate;
 		this.statustbl = statustbl;
 	}
+
+
 
 	public Integer getRecruiter_id() {
 		return recruiter_id;
@@ -114,5 +119,7 @@ public class Recruiter {
 	public void setStatustbl(List<StatusTbl> statustbl) {
 		this.statustbl = statustbl;
 	}
+
+
 
 }
