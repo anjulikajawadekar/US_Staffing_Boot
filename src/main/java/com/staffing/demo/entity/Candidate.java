@@ -29,6 +29,7 @@ public class Candidate {
 	private String email;
 	private String remark;
 	private String reason;
+	private boolean deleted;
 
 //	@ManyToMany
 //	@JoinTable(name = "requsition_candidate", joinColumns = @JoinColumn(name = "candidate_id"), inverseJoinColumns = @JoinColumn(name = "requisition_id"))
@@ -52,7 +53,8 @@ public class Candidate {
 	}
 
 	public Candidate(Integer candidate_id, String candidate_name, String visa_type, String rate_term,
-			String submitted_rate, String phone, String email, String remark, String reason, Recruiter recruiter,
+			String submitted_rate, String phone, String email, String remark, 
+			String reason, boolean deleted,	Recruiter recruiter,
 			Requisition requisition, List<StatusTbl> statustbl) {
 		super();
 		this.candidate_id = candidate_id;
@@ -64,6 +66,7 @@ public class Candidate {
 		this.email = email;
 		this.remark = remark;
 		this.reason = reason;
+		this.deleted = deleted;
 		this.recruiter = recruiter;
 		this.requisition = requisition;
 		this.statustbl = statustbl;
@@ -165,4 +168,11 @@ public class Candidate {
 		this.requisition = requisition;
 	}
 
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
 }
