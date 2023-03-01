@@ -11,6 +11,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import org.apache.catalina.connector.Response;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -56,8 +57,7 @@ public class ServiceFirst {
 
 	@Autowired
 	RecruiterRepo recruiterRepo;
-	
-	
+
 	@Autowired
 	StatusTblRepo statusTblRepo;
 
@@ -84,7 +84,7 @@ public class ServiceFirst {
 
 	@Autowired
 	ServiceFirst serviceFirst;
-	
+
 	@Autowired
 	CandidateRepo candidateRepo;
 
@@ -125,6 +125,42 @@ public class ServiceFirst {
 		Recruiter results = (Recruiter) query.getSingleResult();
 		session.close();
 		return results;
+	}
+
+	public ResponseEntity<?> RecruiterRegistration(String recruiter_name, String recruiter_email, String password) {
+		// TODO Auto-generated method stub
+
+		Session session = null;
+		Transaction transaction = null;
+
+		session = sessionFactory.openSession();
+		transaction = session.beginTransaction();
+
+		Criteria crt = session.createCriteria(Recruiter.class);
+		crt.add(Restrictions.eq("recruiter_email", recruiter_email));
+
+		Recruiter z = (Recruiter) crt.uniqueResult();
+		System.out.print("z = " + z);
+
+		if (z != null) {
+			System.out.println("User is already exist..!");
+			session.close();
+			return (ResponseEntity<?>) ResponseEntity.badRequest().body("User is already exist!");
+
+		} else {
+			recruiter.setRecruiter_name(recruiter_name);
+			recruiter.setRecruiter_email(recruiter_email);
+			recruiter.setPassword(password);
+			recruiter.setRole("TM");
+
+			System.out.print("Registration Successful Employee");
+			session.save(recruiter);
+			transaction.commit();
+
+			session.close();
+
+			return new ResponseEntity<Recruiter>(recruiter, HttpStatus.OK);
+		}
 	}
 
 	public List<Requisition> GetAllRecords() {
@@ -178,7 +214,112 @@ public class ServiceFirst {
 		return requisitionRepo.getById(requisitionID);
 
 	}
-	
+
+	public Recruiter getRecruiterbyID(Integer recruiterID) {
+		// TODO Auto-generated method stub
+		return recruiterRepo.getById(recruiterID);
+	}
+
+	public Recruiter getRecruiterbyEmail(String recruiterEmail) {
+		// TODO Auto-generated method stub
+		Session session = null;
+		session = sessionFactory.openSession();
+		CriteriaBuilder cb = session.getCriteriaBuilder();
+
+		Criteria crt = session.createCriteria(Recruiter.class);
+		crt.add(Restrictions.eq("recruiter_email", recruiterEmail));
+
+		Recruiter z = (Recruiter) crt.uniqueResult();
+		if (z == null) {
+			return (Recruiter) ResponseEntity.badRequest();
+
+		} else {
+			return z;
+		}
+
+	}
+
+	public Recruiter UpdateRecruiterProfile(int recruiterId, String recruiterName, String recruiterEmail,
+			String currentPass, String newPass) {
+		Transaction transaction = null;
+		Session session = sessionFactory.openSession();
+
+		transaction = session.beginTransaction();
+		CriteriaBuilder cb = session.getCriteriaBuilder();
+		CriteriaQuery<Recruiter> cr = cb.createQuery(Recruiter.class);
+		Root<Recruiter> root = cr.from(Recruiter.class);
+
+		cr.select(root).where(cb.equal(root.get("recruiter_id"), recruiterId),
+				cb.equal(root.get("password"), currentPass));
+
+		Query query = session.createQuery(cr);
+		Recruiter results = null;
+		results = (Recruiter) query.getSingleResult();
+		System.out.print("results : " + results);
+
+		if (results != null) {
+			System.out.println("User is already exist..!");
+
+			recruiter = recruiterRepo.getById(recruiterId);
+			recruiter.setRecruiter_name(recruiterName);
+			recruiter.setRecruiter_email(recruiterEmail);
+			recruiter.setPassword(newPass);
+
+			System.out.print("Profile updated successful!");
+
+			recruiterRepo.save(recruiter);
+			transaction.commit();
+
+			session.close();
+			return null;
+		} else {
+
+			session.close();
+			return (Recruiter) ResponseEntity.badRequest();
+		}
+
+	}
+
+	public Recruiter UpdateRecruiterProfileAdmin(int recruiterId, String recruiterName, String recruiterEmail,
+			String newPass) {
+		Transaction transaction = null;
+		Session session = sessionFactory.openSession();
+
+		transaction = session.beginTransaction();
+		CriteriaBuilder cb = session.getCriteriaBuilder();
+		CriteriaQuery<Recruiter> cr = cb.createQuery(Recruiter.class);
+		Root<Recruiter> root = cr.from(Recruiter.class);
+
+		cr.select(root).where(cb.equal(root.get("recruiter_id"), recruiterId));
+				
+
+		Query query = session.createQuery(cr);
+		Recruiter results = null;
+		results = (Recruiter) query.getSingleResult();
+		System.out.print("results : " + results);
+
+		if (results != null) {
+			System.out.println("User is already exist..!");
+
+			recruiter = recruiterRepo.getById(recruiterId);
+			recruiter.setRecruiter_name(recruiterName);
+			recruiter.setRecruiter_email(recruiterEmail);
+			recruiter.setPassword(newPass);
+
+			System.out.print("Profile updated successful!");
+
+			recruiterRepo.save(recruiter);
+			transaction.commit();
+
+			session.close();
+			return null;
+		} else {
+
+			session.close();
+			return (Recruiter) ResponseEntity.badRequest();
+		}
+	}
+
 	public Candidate getCandidateByID(Integer candidateID) {
 
 		return candidateRepo.getById(candidateID);
@@ -234,8 +375,8 @@ public class ServiceFirst {
 		Session session = null;
 		Transaction transaction = null;
 
-		ArrayList<Requisition> arrreq = new ArrayList<Requisition>();
-		ArrayList<Recruiter> arrrec = new ArrayList<Recruiter>();
+		// ArrayList<Requisition> arrreq = new ArrayList<Requisition>();
+		// ArrayList<Recruiter> arrrec = new ArrayList<Recruiter>();
 
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
@@ -251,7 +392,7 @@ public class ServiceFirst {
 
 			Criteria crt1 = session.createCriteria(StatusTbl.class);
 			crt1.add(Restrictions.eq("recruiter.recruiter_id", recruiter_id));
-			crt1.add(Restrictions.eq("status", "Assigned"));
+			crt1.add(Restrictions.eq("status", "Requisiton Assigned"));
 			crt1.add(Restrictions.eq("requisition.requisition_id", a));
 //            crt1.add(Restrictions.eq("candidate", null));
 			System.out.println(a);
@@ -270,24 +411,26 @@ public class ServiceFirst {
 
 			System.out.println("exist");
 
-			statusTbl.setStatus("Assigned");
+			statusTbl.setStatus("Requisiton Assigned");
 			statusTbl.setStatus_date(now);
 			recruiter.setRecruiter_id(recruiter_id);
+			statusTbl.setFlag(true);
 			statusTbl.setRequisitionflag(true);
-			/*arrreq.add(z);
-			arrrec.add(recruiter);
 
-			recruiter.setRequisition(arrreq);
-			requisition.setLikedRecruiter(arrrec);
+			System.out.println(recruiter_id);
+			System.out.println(requisition);
+			/*
+			 * arrreq.add(z); arrrec.add(recruiter);
+			 * 
+			 * recruiter.setRequisition(arrreq); requisition.setLikedRecruiter(arrrec);
+			 */
 
 			statusTbl.setRecruiter(recruiter);
-			statusTbl.setRequisition(requisition);*/
+			statusTbl.setRequisition(z);
 
 			session.save(statusTbl);
-
-			//statusTbl.setRequisitionflag(false);
 			transaction.commit();
-		
+
 			session.close();
 
 			return new ResponseEntity<Requisition>(requisition, HttpStatus.OK);
@@ -304,7 +447,7 @@ public class ServiceFirst {
 			requisition.setPosition_type(position_type);
 			requisition.setSkills(skills);
 
-			statusTbl.setStatus("Assigned");
+			statusTbl.setStatus("Requisiton Assigned");
 			statusTbl.setStatus_date(now);
 			recruiter.setRecruiter_id(recruiter_id);
 			statusTbl.setRecruiter(recruiter);
@@ -312,22 +455,18 @@ public class ServiceFirst {
 			statusTbl.setFlag(true);
 
 			statusTbl.setRequisitionflag(true);
-			/*arrreq.add(requisition);
-			arrrec.add(recruiter);
-
-			recruiter.setRequisition(arrreq);
-			requisition.setLikedRecruiter(arrrec);*/
-			
-			
-			
-
-			session.save(statusTbl);
+			/*
+			 * arrreq.add(requisition); arrrec.add(recruiter);
+			 * 
+			 * recruiter.setRequisition(arrreq); requisition.setLikedRecruiter(arrrec);
+			 */
 
 			session.save(requisition);
-			// RecruiterRepo.save(recruiter);
-			//statusTbl.setRequisitionflag(false);
+			session.save(statusTbl);
+
 			transaction.commit();
 			session.close();
+
 			System.out.println("b req");
 
 			return new ResponseEntity<Requisition>(requisition, HttpStatus.OK);
@@ -341,7 +480,7 @@ public class ServiceFirst {
 
 		Session session = null;
 		Transaction transaction = null;
-		
+
 		requisition = requisitionRepo.getById(requisition_id);
 
 		requisition.setRequisition_from(requisition_from);
@@ -359,6 +498,7 @@ public class ServiceFirst {
 
 		transaction.commit();
 		session.close();
+
 		System.out.println("Requisition updated");
 
 		return new ResponseEntity<Requisition>(requisition, HttpStatus.OK);
@@ -369,11 +509,13 @@ public class ServiceFirst {
 	}
 
 	public ResponseEntity<?> AddCandidate(String candidate_name, String visa_type, String rate_term,
-			String submitted_rate, String phone, String email, String status, String remark, String reason,
-			int recruiter_id, int requisition_id) {
+			String submitted_rate, String phone, String email, String remark, String reason, int recruiter_id,
+			int requisition_id) {
 
 		Session session = null;
 		Transaction transaction = null;
+
+		statusTblRepo.setEnabledFalse2(recruiter_id, requisition_id, 0);
 
 		candidate.setCandidate_name(candidate_name);
 		candidate.setVisa_type(visa_type);
@@ -395,11 +537,12 @@ public class ServiceFirst {
 //		session.save(cd);
 		int candi2 = (Integer) session.save(candidate);
 
-		statusTbl.setStatus("Candidate Screening");
+		statusTbl.setStatus("Submitted");
 		statusTbl.setStatus_date(now);
 		recruiter.setRecruiter_id(recruiter_id);
 		statusTbl.setRecruiter(recruiter);
 		statusTbl.setFlag(true);
+		statusTbl.setRequisitionflag(false);
 		requisition.setRequisition_id(requisition_id);
 		statusTbl.setRequisition(requisition);
 
@@ -413,14 +556,13 @@ public class ServiceFirst {
 
 		return new ResponseEntity<Candidate>(candidate, HttpStatus.OK);
 	}
-	
-	public ResponseEntity<?> updateCandidate(Integer candidate_id, String candidate_name, String visa_type, String rate_term,
-			String submitted_rate, String phone, String email, String remark, String reason
-			) {
+
+	public ResponseEntity<?> updateCandidate(Integer candidate_id, String candidate_name, String visa_type,
+			String rate_term, String submitted_rate, String phone, String email, String remark, String reason) {
 
 		Session session = null;
 		Transaction transaction = null;
-		
+
 		candidate = candidateRepo.getById(candidate_id);
 
 		candidate.setCandidate_name(candidate_name);
@@ -442,7 +584,6 @@ public class ServiceFirst {
 		return new ResponseEntity<Candidate>(candidate, HttpStatus.OK);
 	}
 
-
 //	****************get status by rec_id and rq_id*********************************************
 	public List<StatusTbl> getStatusByTwoId(int recruiter_id, int requisition_id) {
 
@@ -462,42 +603,6 @@ public class ServiceFirst {
 
 		return results;
 	}
-
-//	****************End get status by rec_id and rq_id*********************************************
-
-	/*
-	 * public List<StatusTbl> UpdateStatusTbl(int recruiter_id, int requisition_id,
-	 * String status, int candidate_id) { // TODO Auto-generated method stub Session
-	 * session = sessionFactory.openSession(); Transaction transaction =
-	 * session.beginTransaction();
-	 * 
-	 * CriteriaBuilder cb = session.getCriteriaBuilder();
-	 * 
-	 * CriteriaQuery<StatusTbl> cr = cb.createQuery(StatusTbl.class);
-	 * Root<StatusTbl> root = cr.from(StatusTbl.class);
-	 * 
-	 * cr.select(root).where((cb.equal(root.get("recruiter").get("recruiter_id"),
-	 * recruiter_id)), ((cb.equal(root.get("requisition").get("requisition_id"),
-	 * requisition_id))));
-	 * 
-	 * Query query = session.createQuery(cr); List<StatusTbl> results =
-	 * query.getResultList();
-	 * 
-	 * for (Iterator<StatusTbl> i = results.iterator(); i.hasNext();) {
-	 * 
-	 * StatusTbl x = (StatusTbl) i.next(); Candidate cid = x.getCandidate(); if (cid
-	 * == null) {
-	 * 
-	 * int sid = x.getStatus_id(); System.out.println("Status : " +
-	 * x.getStatus_id()); System.out.println("Status : " + x.getStatus());
-	 * System.out.println("Status_date : " + x.getStatus_date());
-	 * statusTbl.setStatus_id(sid); statusTbl.setFlag(false);
-	 * session.saveOrUpdate(statusTbl); // transaction.commit(); // transaction =
-	 * session.beginTransaction(); session.flush(); session.clear(); }
-	 * 
-	 * System.out.println("Profile updated successful!"); } session.close(); return
-	 * results; }
-	 */
 
 	public void AddStatus1(int recruiter_id, int requisition_id, String status) {
 		// TODO Auto-generated method stub
@@ -585,10 +690,12 @@ public class ServiceFirst {
 		return results;
 	}
 
-	public Client AddClient(String client_name) {
+	public Client AddClient(int requisitor_id, String client_name) {
 		Session session = sessionFactory.openSession();
 		Transaction transaction = session.beginTransaction();
 
+		reqfd.setRequisitor_id(requisitor_id);
+		cl.setRequisitor_fd(reqfd);
 		cl.setClient_name(client_name);
 		session.save(cl);
 
