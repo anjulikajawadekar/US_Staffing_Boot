@@ -11,6 +11,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import org.apache.catalina.connector.Response;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -59,6 +60,7 @@ public class ServiceFirst {
 	@Autowired
 	RecruiterRepo recruiterRepo;
 
+
 	@Autowired
 	StatusTblRepo statusTblRepo;
 
@@ -85,6 +87,7 @@ public class ServiceFirst {
 
 	@Autowired
 	ServiceFirst serviceFirst;
+
 
 	@Autowired
 	CandidateRepo candidateRepo;
@@ -126,6 +129,42 @@ public class ServiceFirst {
 		Recruiter results = (Recruiter) query.getSingleResult();
 		session.close();
 		return results;
+	}
+
+	public ResponseEntity<?> RecruiterRegistration(String recruiter_name, String recruiter_email, String password) {
+		// TODO Auto-generated method stub
+
+		Session session = null;
+		Transaction transaction = null;
+
+		session = sessionFactory.openSession();
+		transaction = session.beginTransaction();
+
+		Criteria crt = session.createCriteria(Recruiter.class);
+		crt.add(Restrictions.eq("recruiter_email", recruiter_email));
+
+		Recruiter z = (Recruiter) crt.uniqueResult();
+		System.out.print("z = " + z);
+
+		if (z != null) {
+			System.out.println("User is already exist..!");
+			session.close();
+			return (ResponseEntity<?>) ResponseEntity.badRequest().body("User is already exist!");
+
+		} else {
+			recruiter.setRecruiter_name(recruiter_name);
+			recruiter.setRecruiter_email(recruiter_email);
+			recruiter.setPassword(password);
+			recruiter.setRole("TM");
+
+			System.out.print("Registration Successful Employee");
+			session.save(recruiter);
+			transaction.commit();
+
+			session.close();
+
+			return new ResponseEntity<Recruiter>(recruiter, HttpStatus.OK);
+		}
 	}
 
 	public List<Requisition> GetAllRecords() {
@@ -178,6 +217,111 @@ public class ServiceFirst {
 
 		return requisitionRepo.getById(requisitionID);
 
+	}
+
+	public Recruiter getRecruiterbyID(Integer recruiterID) {
+		// TODO Auto-generated method stub
+		return recruiterRepo.getById(recruiterID);
+	}
+
+	public Recruiter getRecruiterbyEmail(String recruiterEmail) {
+		// TODO Auto-generated method stub
+		Session session = null;
+		session = sessionFactory.openSession();
+		CriteriaBuilder cb = session.getCriteriaBuilder();
+
+		Criteria crt = session.createCriteria(Recruiter.class);
+		crt.add(Restrictions.eq("recruiter_email", recruiterEmail));
+
+		Recruiter z = (Recruiter) crt.uniqueResult();
+		if (z == null) {
+			return (Recruiter) ResponseEntity.badRequest();
+
+		} else {
+			return z;
+		}
+
+	}
+
+	public Recruiter UpdateRecruiterProfile(int recruiterId, String recruiterName, String recruiterEmail,
+			String currentPass, String newPass) {
+		Transaction transaction = null;
+		Session session = sessionFactory.openSession();
+
+		transaction = session.beginTransaction();
+		CriteriaBuilder cb = session.getCriteriaBuilder();
+		CriteriaQuery<Recruiter> cr = cb.createQuery(Recruiter.class);
+		Root<Recruiter> root = cr.from(Recruiter.class);
+
+		cr.select(root).where(cb.equal(root.get("recruiter_id"), recruiterId),
+				cb.equal(root.get("password"), currentPass));
+
+		Query query = session.createQuery(cr);
+		Recruiter results = null;
+		results = (Recruiter) query.getSingleResult();
+		System.out.print("results : " + results);
+
+		if (results != null) {
+			System.out.println("User is already exist..!");
+
+			recruiter = recruiterRepo.getById(recruiterId);
+			recruiter.setRecruiter_name(recruiterName);
+			recruiter.setRecruiter_email(recruiterEmail);
+			recruiter.setPassword(newPass);
+
+			System.out.print("Profile updated successful!");
+
+			recruiterRepo.save(recruiter);
+			transaction.commit();
+
+			session.close();
+			return null;
+		} else {
+
+			session.close();
+			return (Recruiter) ResponseEntity.badRequest();
+		}
+
+	}
+
+	public Recruiter UpdateRecruiterProfileAdmin(int recruiterId, String recruiterName, String recruiterEmail,
+			String newPass) {
+		Transaction transaction = null;
+		Session session = sessionFactory.openSession();
+
+		transaction = session.beginTransaction();
+		CriteriaBuilder cb = session.getCriteriaBuilder();
+		CriteriaQuery<Recruiter> cr = cb.createQuery(Recruiter.class);
+		Root<Recruiter> root = cr.from(Recruiter.class);
+
+		cr.select(root).where(cb.equal(root.get("recruiter_id"), recruiterId));
+				
+
+		Query query = session.createQuery(cr);
+		Recruiter results = null;
+		results = (Recruiter) query.getSingleResult();
+		System.out.print("results : " + results);
+
+		if (results != null) {
+			System.out.println("User is already exist..!");
+
+			recruiter = recruiterRepo.getById(recruiterId);
+			recruiter.setRecruiter_name(recruiterName);
+			recruiter.setRecruiter_email(recruiterEmail);
+			recruiter.setPassword(newPass);
+
+			System.out.print("Profile updated successful!");
+
+			recruiterRepo.save(recruiter);
+			transaction.commit();
+
+			session.close();
+			return null;
+		} else {
+
+			session.close();
+			return (Recruiter) ResponseEntity.badRequest();
+		}
 	}
 
 	public Candidate getCandidateByID(Integer candidateID) {
@@ -252,7 +396,7 @@ public class ServiceFirst {
 
 			Criteria crt1 = session.createCriteria(StatusTbl.class);
 			crt1.add(Restrictions.eq("recruiter.recruiter_id", recruiter_id));
-			crt1.add(Restrictions.eq("status", "Assigned"));
+			crt1.add(Restrictions.eq("status", "Requisiton Assigned"));
 			crt1.add(Restrictions.eq("requisition.requisition_id", a));
 //            crt1.add(Restrictions.eq("candidate", null));
 			System.out.println(a);
@@ -271,12 +415,14 @@ public class ServiceFirst {
 
 			System.out.println("exist");
 
-			statusTbl.setStatus("Requisition Assigned");
+			statusTbl.setStatus("Requisiton Assigned");
 			statusTbl.setStatus_date(now);
 			recruiter.setRecruiter_id(recruiter_id);
 			statusTbl.setFlag(true);
 			statusTbl.setRequisitionflag(true);
 
+			System.out.println(recruiter_id);
+			System.out.println(requisition);
 			/*
 			 * arrreq.add(z); arrrec.add(recruiter);
 			 * 
@@ -287,8 +433,6 @@ public class ServiceFirst {
 			statusTbl.setRequisition(z);
 
 			session.save(statusTbl);
-
-			// statusTbl.setRequisitionflag(false);
 			transaction.commit();
 
 			session.close();
@@ -311,7 +455,7 @@ public class ServiceFirst {
 //			Integer CurrentRqId = (Integer)session.save(requisition);
 //			System.out.println("line 310: current added Req ID :" + CurrentRqId);
 
-			statusTbl.setStatus("Requisition Assigned");
+			statusTbl.setStatus("Requisiton Assigned");
 			statusTbl.setStatus_date(now);
 			recruiter.setRecruiter_id(recruiter_id);
 			statusTbl.setRecruiter(recruiter);
@@ -325,13 +469,12 @@ public class ServiceFirst {
 			 * recruiter.setRequisition(arrreq); requisition.setLikedRecruiter(arrrec);
 			 */
 
+			session.save(requisition);
 			session.save(statusTbl);
 
-//			session.save(requisition);
-			// RecruiterRepo.save(recruiter);
-			// statusTbl.setRequisitionflag(false);
 			transaction.commit();
 			session.close();
+
 			System.out.println("b req");
 
 			return new ResponseEntity<Requisition>(requisition, HttpStatus.OK);
@@ -363,6 +506,7 @@ public class ServiceFirst {
 
 		transaction.commit();
 		session.close();
+
 		System.out.println("Requisition updated");
 
 		return new ResponseEntity<Requisition>(requisition, HttpStatus.OK);
@@ -373,8 +517,8 @@ public class ServiceFirst {
 //	}
 
 	public ResponseEntity<?> AddCandidate(String candidate_name, String visa_type, String rate_term,
-			String submitted_rate, String phone, String email, String status, String remark, String reason,
-			int recruiter_id, int requisition_id) {
+			String submitted_rate, String phone, String email, String remark, String reason, int recruiter_id,
+			int requisition_id) {
 
 		Session session = null;
 		Transaction transaction = null;
@@ -407,6 +551,7 @@ public class ServiceFirst {
 		statusTbl.setRecruiter(recruiter);
 		statusTbl.setRequisitionflag(false);
 		statusTbl.setFlag(true);
+		statusTbl.setRequisitionflag(false);
 		requisition.setRequisition_id(requisition_id);
 		statusTbl.setRequisition(requisition);
 
@@ -577,10 +722,12 @@ public class ServiceFirst {
 		return results;
 	}
 
-	public Client AddClient(String client_name) {
+	public Client AddClient(int requisitor_id, String client_name) {
 		Session session = sessionFactory.openSession();
 		Transaction transaction = session.beginTransaction();
 
+		reqfd.setRequisitor_id(requisitor_id);
+		cl.setRequisitor_fd(reqfd);
 		cl.setClient_name(client_name);
 		session.save(cl);
 
