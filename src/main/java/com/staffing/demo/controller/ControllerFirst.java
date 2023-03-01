@@ -113,26 +113,6 @@ public class ControllerFirst {
 		return serviceFirst.UpdateRecruiterProfileAdmin(recruiterId,recruiterName,recruiterEmail,newPass);
 	}
 
-
-
-	@GetMapping("/getRecruiterbyEmail")
-	public Recruiter getRecruiterbyEmail(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam String recruiterEmail) {
-		return serviceFirst.getRecruiterbyEmail(recruiterEmail);
-	}
-
-	@PutMapping("/UpdateRecruiterProfile")
-	public Recruiter UpdateRecruiterProfile(HttpServletRequest request, HttpServletResponse response, @RequestParam int recruiterId, String recruiterName,
-			@RequestParam String recruiterEmail, String currentPass, String newPass) {
-		return serviceFirst.UpdateRecruiterProfile(recruiterId,recruiterName,recruiterEmail,currentPass,newPass);
-	}
-	
-	@PutMapping("/UpdateRecruiterProfileAdmin")
-	public Recruiter UpdateRecruiterProfileAdmin(HttpServletRequest request, HttpServletResponse response, @RequestParam int recruiterId, String recruiterName,
-			@RequestParam String recruiterEmail, String newPass) {
-		return serviceFirst.UpdateRecruiterProfileAdmin(recruiterId,recruiterName,recruiterEmail,newPass);
-	}
-
 //	@GetMapping("/getAllReq")
 //	public List<Requisition> getReq() {
 //		return this.serviceFirst.getAllRequisition();
