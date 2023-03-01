@@ -74,7 +74,7 @@ public class ControllerFirst {
 
 	@GetMapping("/getAllRequisition")
 	public List<Requisition> getEMP_TM(HttpServletRequest request, HttpServletResponse response) {
-		return serviceFirst.getAllRec2();
+		return serviceFirst.getAllRequisition();
 	}
 
 	@GetMapping("/getRequisitionByID")
@@ -113,10 +113,30 @@ public class ControllerFirst {
 		return serviceFirst.UpdateRecruiterProfileAdmin(recruiterId,recruiterName,recruiterEmail,newPass);
 	}
 
-	@GetMapping("/getAllReq")
-	public List<Requisition> getReq() {
-		return this.serviceFirst.getAllRec2();
+
+
+	@GetMapping("/getRecruiterbyEmail")
+	public Recruiter getRecruiterbyEmail(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam String recruiterEmail) {
+		return serviceFirst.getRecruiterbyEmail(recruiterEmail);
 	}
+
+	@PutMapping("/UpdateRecruiterProfile")
+	public Recruiter UpdateRecruiterProfile(HttpServletRequest request, HttpServletResponse response, @RequestParam int recruiterId, String recruiterName,
+			@RequestParam String recruiterEmail, String currentPass, String newPass) {
+		return serviceFirst.UpdateRecruiterProfile(recruiterId,recruiterName,recruiterEmail,currentPass,newPass);
+	}
+	
+	@PutMapping("/UpdateRecruiterProfileAdmin")
+	public Recruiter UpdateRecruiterProfileAdmin(HttpServletRequest request, HttpServletResponse response, @RequestParam int recruiterId, String recruiterName,
+			@RequestParam String recruiterEmail, String newPass) {
+		return serviceFirst.UpdateRecruiterProfileAdmin(recruiterId,recruiterName,recruiterEmail,newPass);
+	}
+
+//	@GetMapping("/getAllReq")
+//	public List<Requisition> getReq() {
+//		return this.serviceFirst.getAllRequisition();
+//	}
 
 	@GetMapping("/getAllRcruiter")
 	public List<Recruiter> getRec() {
@@ -223,8 +243,15 @@ public class ControllerFirst {
 			@RequestParam int candidate_id, @RequestParam String status) {
 		System.out.println("update_status2");
 
-		return serviceFirst.Update_status2(recruiter_id, requisition_id, candidate_id, status);
-
+	
+			return serviceFirst.Update_status2(recruiter_id, requisition_id, candidate_id, status);
+	}
+	
+	@PutMapping("/update_status_Admin")
+	public ResponseEntity<StatusTbl> UpdateStatusByAdmin(@RequestParam Integer status_id, @RequestParam String status,
+			@RequestParam String status_date) {
+	
+			return serviceFirst.updateStatusByAdmin(status_id, status, status_date);
 	}
 
 //////////////////////////
@@ -363,9 +390,13 @@ public class ControllerFirst {
 	public VisaType UpdateVisaType(int visa_type_id, String visa_type) {
 		return serviceFirst.UpdateVisaType(visa_type_id, visa_type);
 	}
-
 	@DeleteMapping("/DeleteVisaType")
 	public VisaType DeleteVisaType(int visa_type_id) {
 		return serviceFirst.DeleteVisaType(visa_type_id);
+	}
+	
+	@DeleteMapping("/deleteCadByAdmin")
+	public Candidate DeleteCadByID(int candidate_id) {
+		return serviceFirst.deleteCadByID(candidate_id);
 	}
 }
