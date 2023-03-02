@@ -139,6 +139,7 @@ public class ControllerFirst {
 		return statustblRepo.findAll();
 	}
 
+
 	@PostMapping(value = "/add_recruiter")
 	public ResponseEntity<?> AddRecr(@RequestParam String recruiter_name, @RequestParam String recruiter_email,
 			@RequestParam String password) {
@@ -379,4 +380,14 @@ public class ControllerFirst {
 	public Candidate DeleteCadByID(int candidate_id) {
 		return serviceFirst.deleteCadByID(candidate_id);
 	}
+	
+	@DeleteMapping("/deleteRequisitionByAdmin")
+	public Requisition deleteRequisitionByAdmin(int requisition_id) {
+		return serviceFirst.deleteRequisitionByAdmin(requisition_id);
+	}
+	
+//	@PostMapping("/delst")
+//	public StatusTbl adddelete() {
+//		return serviceFirst.adddelete();
+//	}
 }

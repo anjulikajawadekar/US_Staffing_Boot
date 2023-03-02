@@ -31,6 +31,7 @@ public class Requisition {
 	private String location;
 	private String position_type;
 	private String skills;
+	private boolean deleted;
 
 //	@ManyToMany(mappedBy = "likedRequistion",cascade = { CascadeType.ALL })
 //	@JsonIgnore
@@ -40,8 +41,6 @@ public class Requisition {
 //	@JoinTable(name = "requsition_recruiter", joinColumns = @JoinColumn(name = "requisition_id"), inverseJoinColumns = @JoinColumn(name = "recruiter_id"))
 //	private List<Recruiter> likedRecruiter;
 
-	
-	
 	@OneToMany(mappedBy = "requisition")
 	@JsonIgnore
 	private List<StatusTbl> statustbl;
@@ -55,12 +54,8 @@ public class Requisition {
 		// TODO Auto-generated constructor stub
 	}
 
-	
-	
-	
-
 	public Requisition(Integer requisition_id, String requisition_from, Integer id, String client, String job_title,
-			String duration, String client_rate, String location, String position_type, String skills,
+			String duration, String client_rate, String location, String position_type, String skills, boolean deleted,
 			List<StatusTbl> statustbl, List<Candidate> candidate) {
 		super();
 		this.requisition_id = requisition_id;
@@ -73,13 +68,10 @@ public class Requisition {
 		this.location = location;
 		this.position_type = position_type;
 		this.skills = skills;
+		this.deleted = deleted;
 		this.statustbl = statustbl;
 		this.candidate = candidate;
 	}
-
-
-
-
 
 	public Integer getRequisition_id() {
 		return requisition_id;
@@ -177,7 +169,12 @@ public class Requisition {
 		this.candidate = candidate;
 	}
 
+	public boolean isDeleted() {
+		return deleted;
+	}
 
-
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
 
 }

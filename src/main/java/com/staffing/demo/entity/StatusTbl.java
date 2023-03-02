@@ -24,6 +24,7 @@ public class StatusTbl {
 	private boolean requisitionflag;
 	private LocalDate status_date;
 
+
 	@ManyToOne
 	@JoinColumn(name = "requisition_id")
 	private Requisition requisition;
@@ -41,6 +42,8 @@ public class StatusTbl {
 		// TODO Auto-generated constructor stub
 	}
 
+
+
 	public StatusTbl(Integer status_id, String status, boolean flag, boolean requisitionflag, LocalDate status_date,
 			Requisition requisition, Recruiter recruiter, Candidate candidate) {
 		super();
@@ -53,6 +56,8 @@ public class StatusTbl {
 		this.recruiter = recruiter;
 		this.candidate = candidate;
 	}
+
+
 
 	public Integer getStatus_id() {
 		return status_id;
@@ -117,5 +122,7 @@ public class StatusTbl {
 	public void setRequisitionflag(boolean requisitionflag) {
 		this.requisitionflag = requisitionflag;
 	}
+
+	
 
 }
