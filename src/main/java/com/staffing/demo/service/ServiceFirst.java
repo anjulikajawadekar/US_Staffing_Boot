@@ -1,5 +1,6 @@
 package com.staffing.demo.service;
 
+import java.io.Console;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -450,6 +451,7 @@ public class ServiceFirst {
 			requisition.setLocation(location);
 			requisition.setPosition_type(position_type);
 			requisition.setSkills(skills);
+			requisition.setDeleted(true);
 			session.save(requisition);
 			// ******************To Get ID of current added records************************
 //			Integer CurrentRqId = (Integer)session.save(requisition);
@@ -520,9 +522,34 @@ public class ServiceFirst {
 			String submitted_rate, String phone, String email, String remark, String reason, int recruiter_id,
 			int requisition_id) {
 
+		
+		System.out.println(requisition_id);
+		System.out.println(recruiter_id);
 		Session session = null;
 		Transaction transaction = null;
+		
+		session = sessionFactory.openSession();
+		transaction = session.beginTransaction();
+		
+		CriteriaBuilder cb = session.getCriteriaBuilder();
+//		Criteria crt1 = session.createCriteria(StatusTbl.class);
+//		crt1.add(Restrictions.eq("recruiter.recruiter_id", recruiter_id));
+//		crt1.add(Restrictions.eq("requisition.requisition_id", requisition_id));
+//		StatusTbl st=crt1.
+//		System.out.println(st);
+		
+		CriteriaQuery<StatusTbl> cr = cb.createQuery(StatusTbl.class);
+		Root<StatusTbl> root = cr.from(StatusTbl.class);
 
+		cr.select(root).where((cb.equal(root.get("recruiter").get("recruiter_id"), recruiter_id)),
+				(cb.equal(root.get("requisition").get("requisition_id"), requisition_id))
+				);
+
+		Query query = session.createQuery(cr);
+		List<StatusTbl> results = query.getResultList();
+		System.out.println(results);
+	
+		
 		statusTblRepo.setEnabledFalse2(recruiter_id, requisition_id, 0);
 
 		candidate.setCandidate_name(candidate_name);
@@ -534,6 +561,8 @@ public class ServiceFirst {
 		candidate.setRemark(remark);
 		candidate.setReason(reason);
 		candidate.setDeleted(true);
+		
+		
 		recruiter.setRecruiter_id(recruiter_id);
 		candidate.setRecruiter(recruiter);
 
@@ -549,9 +578,22 @@ public class ServiceFirst {
 		statusTbl.setStatus_date(now);
 		recruiter.setRecruiter_id(recruiter_id);
 		statusTbl.setRecruiter(recruiter);
-		statusTbl.setRequisitionflag(false);
+		
 		statusTbl.setFlag(true);
-		statusTbl.setRequisitionflag(false);
+		
+		if(results.isEmpty())
+		{
+			System.out.println("req not found");
+			statusTbl.setRequisitionflag(true);
+			
+		}
+		else {
+			System.out.println("req found");
+			statusTbl.setRequisitionflag(false);
+		}
+		
+		
+		
 		requisition.setRequisition_id(requisition_id);
 		statusTbl.setRequisition(requisition);
 
@@ -1047,5 +1089,21 @@ public class ServiceFirst {
 		return candidate;
 		
 	}
+
+	public Requisition deleteRequisitionByAdmin(int requisition_id) {
+		requisition = requisitionRepo.getById(requisition_id);
+		requisition.setDeleted(false);
+		requisitionRepo.save(requisition);
+		return requisition;
+	}
+
+
+
+//	public StatusTbl adddelete() {
+//		
+//		requisitionRepo.setEnabledDelete();
+//		
+//		return null;
+//	}
 
 }
