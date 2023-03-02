@@ -13,11 +13,11 @@ import com.staffing.demo.entity.StatusTbl;
 
 public interface StatusTblRepo extends JpaRepository<StatusTbl, Integer> {
 
-	@Modifying
-	@Transactional
-	@Query("UPDATE StatusTbl st  SET st.flag = false where requisition_id=:requisiton_id "
-			+ "and recruiter_id=:recruiter_id")
-	void setEnabledFalse1(int requisiton_id, int recruiter_id);
+//	@Modifying
+//	@Transactional
+//	@Query("UPDATE StatusTbl st  SET st.flag = false where requisition_id=:requisiton_id "
+//			+ "and recruiter_id=:recruiter_id")
+//	void setEnabledFalse1(int requisiton_id, int recruiter_id);
 
 	@Modifying
 	@Transactional
@@ -28,4 +28,10 @@ public interface StatusTblRepo extends JpaRepository<StatusTbl, Integer> {
 	@Query("select st from StatusTbl st order by st.status_id desc")
 	@Override
 	List<StatusTbl> findAll();
+	
+//	@Modifying
+//	@Transactional
+//	@Query("UPDATE StatusTbl st  SET st.deleted = true")
+//	void setEnabledDelete();
+	
 }
