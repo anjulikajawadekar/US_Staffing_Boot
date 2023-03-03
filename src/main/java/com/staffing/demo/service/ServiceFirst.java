@@ -61,7 +61,6 @@ public class ServiceFirst {
 	@Autowired
 	RecruiterRepo recruiterRepo;
 
-
 	@Autowired
 	StatusTblRepo statusTblRepo;
 
@@ -88,7 +87,6 @@ public class ServiceFirst {
 
 	@Autowired
 	ServiceFirst serviceFirst;
-
 
 	@Autowired
 	CandidateRepo candidateRepo;
@@ -296,7 +294,6 @@ public class ServiceFirst {
 		Root<Recruiter> root = cr.from(Recruiter.class);
 
 		cr.select(root).where(cb.equal(root.get("recruiter_id"), recruiterId));
-				
 
 		Query query = session.createQuery(cr);
 		Recruiter results = null;
@@ -472,6 +469,7 @@ public class ServiceFirst {
 			 */
 
 			session.save(requisition);
+
 			session.save(statusTbl);
 
 			transaction.commit();
@@ -521,34 +519,31 @@ public class ServiceFirst {
 			String submitted_rate, String phone, String email, String remark, String reason, int recruiter_id,
 			int requisition_id) {
 
-		
 		System.out.println(requisition_id);
 		System.out.println(recruiter_id);
 		Session session = null;
 		Transaction transaction = null;
-		
+
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
-		
+
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 //		Criteria crt1 = session.createCriteria(StatusTbl.class);
 //		crt1.add(Restrictions.eq("recruiter.recruiter_id", recruiter_id));
 //		crt1.add(Restrictions.eq("requisition.requisition_id", requisition_id));
 //		StatusTbl st=crt1.
 //		System.out.println(st);
-		
+
 		CriteriaQuery<StatusTbl> cr = cb.createQuery(StatusTbl.class);
 		Root<StatusTbl> root = cr.from(StatusTbl.class);
 
 		cr.select(root).where((cb.equal(root.get("recruiter").get("recruiter_id"), recruiter_id)),
-				(cb.equal(root.get("requisition").get("requisition_id"), requisition_id))
-				);
+				(cb.equal(root.get("requisition").get("requisition_id"), requisition_id)));
 
 		Query query = session.createQuery(cr);
 		List<StatusTbl> results = query.getResultList();
 		System.out.println(results);
-	
-		
+
 		statusTblRepo.setEnabledFalse2(recruiter_id, requisition_id, 0);
 
 		candidate.setCandidate_name(candidate_name);
@@ -560,9 +555,7 @@ public class ServiceFirst {
 		candidate.setRemark(remark);
 		candidate.setReason(reason);
 		candidate.setDeleted(true);
-		
-		
-		
+
 		recruiter.setRecruiter_id(recruiter_id);
 		candidate.setRecruiter(recruiter);
 
@@ -572,36 +565,34 @@ public class ServiceFirst {
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
 //		session.save(cd);
-	//	int candi2 = (Integer) session.save(candidate);
+//		int candi2 = (Integer) session.save(candidate);
 
 		statusTbl.setStatus("Submitted");
 		statusTbl.setStatus_date(now);
 		recruiter.setRecruiter_id(recruiter_id);
 		statusTbl.setRecruiter(recruiter);
-		
-		
+
 		statusTbl.setFlag(true);
-		
-		if(results.isEmpty())
-		{
+
+		if (results.isEmpty()) {
 			System.out.println("req not found");
 			statusTbl.setRequisitionflag(true);
-			
-		}
-		else {
+
+		} else {
 			System.out.println("req found");
 			statusTbl.setRequisitionflag(false);
 		}
-		
-		
-		
+
 		requisition.setRequisition_id(requisition_id);
 		statusTbl.setRequisition(requisition);
 
-		//candidate.setCandidate_id(candi2);
+//		candidate.setCandidate_id(candi2);
 		statusTbl.setCandidate(candidate);
+
 		session.save(candidate);
 		session.save(statusTbl);
+
+//		statusTbl.setCandidate(null);
 
 		transaction.commit();
 		session.close();
@@ -726,10 +717,8 @@ public class ServiceFirst {
 		AddStatus2(recruiter_id, requisition_id, candidate_id, status);
 		return ResponseEntity.ok("Status with candidate updated successful!");
 	}
-/////////////////
 
 	public ResponseEntity<StatusTbl> updateStatusByAdmin(Integer status_id, String status, String status_date) {
-	
 
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		LocalDate dt1 = LocalDate.parse(status_date, formatter);
@@ -738,14 +727,7 @@ public class ServiceFirst {
 		System.out.println("status id = " + statusTbl.getStatus());
 		statusTbl.setStatus(status);
 		statusTbl.setStatus_date(dt1);
-		
-//		Session session = sessionFactory.openSession();
-//		Transaction transaction = session.beginTransaction();
-//
-//		session.saveOrUpdate(statusTbl);
-//		transaction.commit();
-//		session.close();
-		
+
 		statusTblRepo.save(statusTbl);
 //		return statusTbl;
 		return new ResponseEntity<StatusTbl>(statusTbl, HttpStatus.OK);
@@ -1083,12 +1065,12 @@ public class ServiceFirst {
 	}
 
 	public Candidate deleteCadByID(int candidate_id) {
-		
+
 		candidate = candidateRepo.getById(candidate_id);
 		candidate.setDeleted(false);
 		candidateRepo.save(candidate);
 		return candidate;
-		
+
 	}
 
 	public Requisition deleteRequisitionByAdmin(int requisition_id) {
@@ -1097,8 +1079,6 @@ public class ServiceFirst {
 		requisitionRepo.save(requisition);
 		return requisition;
 	}
-
-
 
 //	public StatusTbl adddelete() {
 //		
