@@ -397,7 +397,7 @@ public class ServiceFirst {
 
 			Criteria crt1 = session.createCriteria(StatusTbl.class);
 			crt1.add(Restrictions.eq("recruiter.recruiter_id", recruiter_id));
-			crt1.add(Restrictions.eq("status", "Requisiton Assigned"));
+			//crt1.add(Restrictions.eq("status", "Requisiton Assigned"));
 			crt1.add(Restrictions.eq("requisition.requisition_id", a));
 //            crt1.add(Restrictions.eq("candidate", null));
 			System.out.println(a);
@@ -410,7 +410,7 @@ public class ServiceFirst {
 			if (z1 != null) {
 				System.out.println("record exists");
 
-				return new ResponseEntity<StatusTbl>(z1, HttpStatus.OK);
+				return  (ResponseEntity<?>) ResponseEntity.badRequest();
 
 			}
 
@@ -421,7 +421,7 @@ public class ServiceFirst {
 			recruiter.setRecruiter_id(recruiter_id);
 			statusTbl.setFlag(true);
 			statusTbl.setRequisitionflag(true);
-
+			statusTbl.setCandidate(null);
 			System.out.println(recruiter_id);
 			System.out.println(requisition);
 			/*
@@ -447,7 +447,7 @@ public class ServiceFirst {
 			requisition.setClient(client);
 			requisition.setJob_title(job_title);
 			requisition.setDuration(duration);
-			requisition.setClient_rate(client_rate + "$");
+			requisition.setClient_rate(client_rate);
 			requisition.setLocation(location);
 			requisition.setPosition_type(position_type);
 			requisition.setSkills(skills);
@@ -463,7 +463,7 @@ public class ServiceFirst {
 			statusTbl.setRecruiter(recruiter);
 			statusTbl.setRequisition(requisition);
 			statusTbl.setFlag(true);
-
+			statusTbl.setCandidate(null);
 			statusTbl.setRequisitionflag(true);
 			/*
 			 * arrreq.add(requisition); arrrec.add(recruiter);
@@ -477,7 +477,6 @@ public class ServiceFirst {
 			transaction.commit();
 			session.close();
 
-			System.out.println("b req");
 
 			return new ResponseEntity<Requisition>(requisition, HttpStatus.OK);
 
@@ -563,6 +562,7 @@ public class ServiceFirst {
 		candidate.setDeleted(true);
 		
 		
+		
 		recruiter.setRecruiter_id(recruiter_id);
 		candidate.setRecruiter(recruiter);
 
@@ -572,12 +572,13 @@ public class ServiceFirst {
 		session = sessionFactory.openSession();
 		transaction = session.beginTransaction();
 //		session.save(cd);
-		int candi2 = (Integer) session.save(candidate);
+	//	int candi2 = (Integer) session.save(candidate);
 
 		statusTbl.setStatus("Submitted");
 		statusTbl.setStatus_date(now);
 		recruiter.setRecruiter_id(recruiter_id);
 		statusTbl.setRecruiter(recruiter);
+		
 		
 		statusTbl.setFlag(true);
 		
@@ -597,9 +598,9 @@ public class ServiceFirst {
 		requisition.setRequisition_id(requisition_id);
 		statusTbl.setRequisition(requisition);
 
-		candidate.setCandidate_id(candi2);
+		//candidate.setCandidate_id(candi2);
 		statusTbl.setCandidate(candidate);
-
+		session.save(candidate);
 		session.save(statusTbl);
 
 		transaction.commit();
