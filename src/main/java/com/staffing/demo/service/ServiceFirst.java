@@ -394,7 +394,7 @@ public class ServiceFirst {
 
 			Criteria crt1 = session.createCriteria(StatusTbl.class);
 			crt1.add(Restrictions.eq("recruiter.recruiter_id", recruiter_id));
-			crt1.add(Restrictions.eq("status", "Requisiton Assigned"));
+			//crt1.add(Restrictions.eq("status", "Requisiton Assigned"));
 			crt1.add(Restrictions.eq("requisition.requisition_id", a));
 //            crt1.add(Restrictions.eq("candidate", null));
 			System.out.println(a);
@@ -407,7 +407,7 @@ public class ServiceFirst {
 			if (z1 != null) {
 				System.out.println("record exists");
 
-				return new ResponseEntity<StatusTbl>(z1, HttpStatus.OK);
+				return  (ResponseEntity<?>) ResponseEntity.badRequest();
 
 			}
 
@@ -419,7 +419,6 @@ public class ServiceFirst {
 			statusTbl.setFlag(true);
 			statusTbl.setRequisitionflag(true);
 			statusTbl.setCandidate(null);
-
 			System.out.println(recruiter_id);
 			System.out.println(requisition);
 			/*
@@ -462,7 +461,6 @@ public class ServiceFirst {
 			statusTbl.setRequisition(requisition);
 			statusTbl.setFlag(true);
 			statusTbl.setCandidate(null);
-
 			statusTbl.setRequisitionflag(true);
 			/*
 			 * arrreq.add(requisition); arrrec.add(recruiter);
@@ -477,7 +475,6 @@ public class ServiceFirst {
 			transaction.commit();
 			session.close();
 
-			System.out.println("b req");
 
 			return new ResponseEntity<Requisition>(requisition, HttpStatus.OK);
 
