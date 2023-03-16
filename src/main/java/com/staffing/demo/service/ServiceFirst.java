@@ -447,6 +447,7 @@ public class ServiceFirst {
 			 */
 
 			session.save(requisition);
+
 			session.save(statusTbl);
 
 			session.close();
@@ -554,6 +555,7 @@ public class ServiceFirst {
 
 		// candidate.setCandidate_id(candi2);
 		statusTbl.setCandidate(candidate);
+
 		session.save(candidate);
 		session.save(statusTbl);
 
@@ -678,7 +680,6 @@ public class ServiceFirst {
 		AddStatus2(recruiter_id, requisition_id, candidate_id, status);
 		return ResponseEntity.ok("Status with candidate updated successful!");
 	}
-/////////////////
 
 	public ResponseEntity<StatusTbl> updateStatusByAdmin(Integer status_id, String status, String status_date) {
 
