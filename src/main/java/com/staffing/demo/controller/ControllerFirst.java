@@ -79,7 +79,7 @@ public class ControllerFirst {
 
 	@GetMapping("/getRequisitionByID")
 	public Requisition getRquisitionByID(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam Integer ID) {
+			@RequestParam String ID) {
 		return serviceFirst.getRecByID(ID);
 	}
 
@@ -148,7 +148,7 @@ public class ControllerFirst {
 	}
 
 	@PostMapping(value = "/add_requsition")
-	public ResponseEntity<?> AddReq(@RequestParam String requisition_from, @RequestParam int id,
+	public ResponseEntity<?> AddReq(@RequestParam String requisition_from, @RequestParam String id,
 			@RequestParam String client, @RequestParam String job_title, @RequestParam String duration,
 			@RequestParam String client_rate, @RequestParam String location, @RequestParam String position_type,
 			@RequestParam String skills, @RequestParam int recruiter_id) {
@@ -160,7 +160,7 @@ public class ControllerFirst {
 
 	@PutMapping(value = "/update_requsition")
 	public ResponseEntity<?> UpdateReq(@RequestParam int requisition_id, @RequestParam String requisition_from,
-			@RequestParam int id, @RequestParam String client, @RequestParam String job_title,
+			@RequestParam String id, @RequestParam String client, @RequestParam String job_title,
 			@RequestParam String duration, @RequestParam String client_rate, @RequestParam String location,
 			@RequestParam String position_type, @RequestParam String skills) {
 
@@ -170,7 +170,7 @@ public class ControllerFirst {
 	}
 
 	@PostMapping(value = "/add_candidate")
-	public ResponseEntity<?> AddCandi(@RequestParam String candidate_name, @RequestParam String visa_type,
+	public ResponseEntity<?> AddCandidate(@RequestParam String candidate_name, @RequestParam String visa_type,
 			@RequestParam String rate_term, @RequestParam String submitted_rate, @RequestParam String phone,
 			@RequestParam String email, @RequestParam String remark, @RequestParam String reason,
 			@RequestParam int recruiter_id, @RequestParam int requisition_id) {
@@ -197,18 +197,7 @@ public class ControllerFirst {
 		return serviceFirst.getStatusByTwoId(recruiter_id, requisition_id);
 	}
 
-//	@PostMapping("/update_status")
-//	public ResponseEntity<String> Update_status(@RequestParam int recruiter_id, @RequestParam int requisition_id,
-//			@RequestParam int candidate_id, @RequestParam String status) {
-//		System.out.println("hello");
-//
-//		if (candidate_id == 0) {
-//			return serviceFirst.Update_status1(recruiter_id, requisition_id, status);
-//		} else {
-//			return serviceFirst.Update_status2(recruiter_id, requisition_id, candidate_id, status);
-//		}
-//
-//	}
+
 
 	@PostMapping("/update_status1")
 	public ResponseEntity<String> Update_status1(@RequestParam int recruiter_id, @RequestParam int requisition_id,
@@ -384,6 +373,11 @@ public class ControllerFirst {
 	@DeleteMapping("/deleteRequisitionByAdmin")
 	public Requisition deleteRequisitionByAdmin(int requisition_id) {
 		return serviceFirst.deleteRequisitionByAdmin(requisition_id);
+	}
+	
+	@DeleteMapping("/deleteStatusByAdmin")
+	public StatusTbl DeletStatusByID(int status_id) {
+		return serviceFirst.DeletStatusByID(status_id);
 	}
 	
 //	@PostMapping("/delst")
