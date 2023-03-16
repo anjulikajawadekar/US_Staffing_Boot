@@ -79,7 +79,7 @@ public class ControllerFirst {
 
 	@GetMapping("/getRequisitionByID")
 	public Requisition getRquisitionByID(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam Integer ID) {
+			@RequestParam String ID) {
 		return serviceFirst.getRecByID(ID);
 	}
 
@@ -148,7 +148,7 @@ public class ControllerFirst {
 	}
 
 	@PostMapping(value = "/add_requsition")
-	public ResponseEntity<?> AddReq(@RequestParam String requisition_from, @RequestParam int id,
+	public ResponseEntity<?> AddReq(@RequestParam String requisition_from, @RequestParam String id,
 			@RequestParam String client, @RequestParam String job_title, @RequestParam String duration,
 			@RequestParam String client_rate, @RequestParam String location, @RequestParam String position_type,
 			@RequestParam String skills, @RequestParam int recruiter_id) {
@@ -160,9 +160,10 @@ public class ControllerFirst {
 
 	@PutMapping(value = "/update_requsition")
 	public ResponseEntity<?> UpdateReq(@RequestParam int requisition_id, @RequestParam String requisition_from,
-			@RequestParam int id, @RequestParam String client, @RequestParam String job_title,
+			@RequestParam String id, @RequestParam String client, @RequestParam String job_title,
 			@RequestParam String duration, @RequestParam String client_rate, @RequestParam String location,
 			@RequestParam String position_type, @RequestParam String skills) {
+		System.out.println("skills:  \n"+skills);
 
 		return serviceFirst.updateRequisition(requisition_id, requisition_from, id, client, job_title, duration,
 				client_rate, location, position_type, skills);
@@ -385,6 +386,11 @@ public class ControllerFirst {
 	public Requisition deleteRequisitionByAdmin(int requisition_id) {
 		return serviceFirst.deleteRequisitionByAdmin(requisition_id);
 	}
+	
+//	@GetMapping("/getAllStatusWithCad")
+//	public ResponseEntity<?> getAllStatusWithCad( @RequestParam int status_id) {
+//		return serviceFirst.getAllStatusWithCad(status_id);
+//	}
 	
 //	@PostMapping("/delst")
 //	public StatusTbl adddelete() {

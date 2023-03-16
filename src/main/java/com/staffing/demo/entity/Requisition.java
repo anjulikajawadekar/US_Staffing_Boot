@@ -23,7 +23,8 @@ public class Requisition {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer requisition_id;
 	private String requisition_from;
-	private Integer id;
+//	private Integer id;
+	private String id;
 	private String client;
 	private String job_title;
 	private String duration;
@@ -54,7 +55,7 @@ public class Requisition {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Requisition(Integer requisition_id, String requisition_from, Integer id, String client, String job_title,
+	public Requisition(Integer requisition_id, String requisition_from, String id, String client, String job_title,
 			String duration, String client_rate, String location, String position_type, String skills, boolean deleted,
 			List<StatusTbl> statustbl, List<Candidate> candidate) {
 		super();
@@ -89,11 +90,11 @@ public class Requisition {
 		this.requisition_from = requisition_from;
 	}
 
-	public Integer getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
