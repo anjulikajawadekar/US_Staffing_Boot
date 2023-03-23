@@ -54,7 +54,6 @@ public class Requisition {
 		// TODO Auto-generated constructor stub
 	}
 
-
 	public Requisition(Integer requisition_id, String requisition_from, String id, String client, String job_title,
 			String duration, String client_rate, String location, String position_type, String skills, boolean deleted,
 			List<StatusTbl> statustbl, List<Candidate> candidate) {
