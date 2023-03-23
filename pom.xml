@@ -7,15 +7,18 @@
 		<version>2.7.5</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
+
 	<groupId>com.staffing.demo</groupId>
 	<artifactId>US_Staffing_New</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>US_Staffing_New</name>
+
 	<description>US Staffing project for Spring Boot </description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
+		<Start-class>com.staffing.demo.UsStaffingNewApplication</Start-class>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -54,11 +57,12 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
 		<dependency>
-        	<groupId>org.springframework.boot</groupId>
-        	<artifactId>spring-boot-starter-tomcat</artifactId>
-		</dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-tomcat</artifactId>
+        <scope>provided</scope>
+    </dependency>
+
 		
 	</dependencies>
 

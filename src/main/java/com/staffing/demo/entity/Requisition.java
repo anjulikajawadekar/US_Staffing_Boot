@@ -23,7 +23,6 @@ public class Requisition {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer requisition_id;
 	private String requisition_from;
-//	private Integer id;
 	private String id;
 	private String client;
 	private String job_title;
@@ -73,6 +72,7 @@ public class Requisition {
 		this.statustbl = statustbl;
 		this.candidate = candidate;
 	}
+
 
 	public Integer getRequisition_id() {
 		return requisition_id;

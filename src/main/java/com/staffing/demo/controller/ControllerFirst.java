@@ -171,7 +171,7 @@ public class ControllerFirst {
 	}
 
 	@PostMapping(value = "/add_candidate")
-	public ResponseEntity<?> AddCandi(@RequestParam String candidate_name, @RequestParam String visa_type,
+	public ResponseEntity<?> AddCandidate(@RequestParam String candidate_name, @RequestParam String visa_type,
 			@RequestParam String rate_term, @RequestParam String submitted_rate, @RequestParam String phone,
 			@RequestParam String email, @RequestParam String remark, @RequestParam String reason,
 			@RequestParam int recruiter_id, @RequestParam int requisition_id) {
@@ -198,18 +198,7 @@ public class ControllerFirst {
 		return serviceFirst.getStatusByTwoId(recruiter_id, requisition_id);
 	}
 
-//	@PostMapping("/update_status")
-//	public ResponseEntity<String> Update_status(@RequestParam int recruiter_id, @RequestParam int requisition_id,
-//			@RequestParam int candidate_id, @RequestParam String status) {
-//		System.out.println("hello");
-//
-//		if (candidate_id == 0) {
-//			return serviceFirst.Update_status1(recruiter_id, requisition_id, status);
-//		} else {
-//			return serviceFirst.Update_status2(recruiter_id, requisition_id, candidate_id, status);
-//		}
-//
-//	}
+
 
 	@PostMapping("/update_status1")
 	public ResponseEntity<String> Update_status1(@RequestParam int recruiter_id, @RequestParam int requisition_id,
@@ -387,10 +376,10 @@ public class ControllerFirst {
 		return serviceFirst.deleteRequisitionByAdmin(requisition_id);
 	}
 	
-//	@GetMapping("/getAllStatusWithCad")
-//	public ResponseEntity<?> getAllStatusWithCad( @RequestParam int status_id) {
-//		return serviceFirst.getAllStatusWithCad(status_id);
-//	}
+	@DeleteMapping("/deleteStatusByAdmin")
+	public StatusTbl DeletStatusByID(int status_id) {
+		return serviceFirst.DeletStatusByID(status_id);
+	}
 	
 //	@PostMapping("/delst")
 //	public StatusTbl adddelete() {
