@@ -2,17 +2,18 @@ package com.staffing.demo.entity;
 
 import java.time.LocalDate;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "status_id")
 public class StatusTbl {
 
 	@Id
@@ -33,8 +34,10 @@ public class StatusTbl {
 	@JoinColumn(name = "recruiter_id")
 	private Recruiter recruiter;
 
+	
 	@ManyToOne
 	@JoinColumn(name = "candidate_id")
+	@JsonIgnoreProperties("statustbl")
 	private Candidate candidate;
 
 	public StatusTbl() {
