@@ -176,6 +176,7 @@ public class ControllerFirst {
 			@RequestParam String id, @RequestParam String client, @RequestParam String job_title,
 			@RequestParam String duration, @RequestParam String client_rate, @RequestParam String location,
 			@RequestParam String position_type, @RequestParam String skills) {
+		System.out.println("skills:  \n"+skills);
 
 		return serviceFirst.updateRequisition(requisition_id, requisition_from, id, client, job_title, duration,
 				client_rate, location, position_type, skills);
