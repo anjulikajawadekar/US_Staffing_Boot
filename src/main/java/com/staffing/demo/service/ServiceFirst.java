@@ -552,6 +552,7 @@ public class ServiceFirst {
 
 		Session session = entityManager.unwrap(Session.class);
 
+		statusTbl.setCandidate(null);
 		statusTbl.setStatus(status);
 		statusTbl.setStatus_date(now);
 		recruiter.setRecruiter_id(recruiter_id);
