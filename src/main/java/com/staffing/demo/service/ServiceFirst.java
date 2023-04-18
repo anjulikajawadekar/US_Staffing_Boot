@@ -1,5 +1,6 @@
 package com.staffing.demo.service;
 
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.CrossOrigin;
+
 
 import com.staffing.demo.entity.Candidate;
 import com.staffing.demo.entity.Recruiter;
@@ -115,6 +117,12 @@ public class ServiceFirst {
 
 	DateTimeFormatter dtf_month = DateTimeFormatter.ofPattern("MMM-yyyy");
 
+	int currentMonth = LocalDate.now().getMonthValue();
+	int currentYear = LocalDate.now().getYear();
+	int lastMonth = LocalDate.now().getMonthValue() - 1;
+
+	int lastYear = LocalDate.now().getYear() - 1;
+
 	public Recruiter validateEmp_jpa(String Username, String Password) {
 
 		Session session = entityManager.unwrap(Session.class);
@@ -187,8 +195,7 @@ public class ServiceFirst {
 		CriteriaQuery<Requisition> cr = cb.createQuery(Requisition.class);
 		Root<Requisition> root = cr.from(Requisition.class);
 
-		cr.select(root).where(cb.equal(root.get("id"), ID),
-				(cb.equal(root.get("deleted"), 1)));
+		cr.select(root).where(cb.equal(root.get("id"), ID), (cb.equal(root.get("deleted"), 1)));
 
 		Query query = session.createQuery(cr);
 		Requisition results = null;
@@ -212,7 +219,7 @@ public class ServiceFirst {
 	public Recruiter getRecruiterbyEmail(String recruiterEmail) {
 
 		Session session = entityManager.unwrap(Session.class);
-	
+
 		Criteria crt = session.createCriteria(Recruiter.class);
 		crt.add(Restrictions.eq("recruiter_email", recruiterEmail));
 
@@ -226,43 +233,7 @@ public class ServiceFirst {
 
 	}
 
-	public Recruiter UpdateRecruiterProfile(int recruiterId, String recruiterName, String recruiterEmail,
-			String currentPass, String newPass) {
-
-		Session session = entityManager.unwrap(Session.class);
-
-		CriteriaBuilder cb = session.getCriteriaBuilder();
-		CriteriaQuery<Recruiter> cr = cb.createQuery(Recruiter.class);
-		Root<Recruiter> root = cr.from(Recruiter.class);
-
-		cr.select(root).where(cb.equal(root.get("recruiter_id"), recruiterId),
-				cb.equal(root.get("password"), currentPass));
-
-		Query query = session.createQuery(cr);
-		Recruiter results = null;
-		results = (Recruiter) query.getSingleResult();
-
-		if (results != null) {
-
-			recruiter = recruiterRepo.getById(recruiterId);
-			recruiter.setRecruiter_name(recruiterName);
-			recruiter.setRecruiter_email(recruiterEmail);
-			recruiter.setPassword(newPass);
-
-			recruiterRepo.save(recruiter);
-
-			session.close();
-			return null;
-		} else {
-
-			session.close();
-			return (Recruiter) ResponseEntity.badRequest();
-		}
-
-	}
-
-	public Recruiter UpdateRecruiterProfileAdmin(int recruiterId, String recruiterName, String recruiterEmail,
-			String newPass) {
+	public Recruiter UpdateRecruiterProfile(int recruiterId, String recruiterName, String recruiterEmail) {
 
 		Session session = entityManager.unwrap(Session.class);
 
@@ -281,6 +252,68 @@ public class ServiceFirst {
 			recruiter = recruiterRepo.getById(recruiterId);
 			recruiter.setRecruiter_name(recruiterName);
 			recruiter.setRecruiter_email(recruiterEmail);
+
+			recruiterRepo.save(recruiter);
+
+			session.close();
+			return null;
+		} else {
+
+			session.close();
+			return (Recruiter) ResponseEntity.badRequest();
+		}
+
+	}
+
+	public Recruiter ChangePassword(int recruiterId, String currentPass, String newPass) {
+
+		Session session = entityManager.unwrap(Session.class);
+
+		CriteriaBuilder cb = session.getCriteriaBuilder();
+		CriteriaQuery<Recruiter> cr = cb.createQuery(Recruiter.class);
+		Root<Recruiter> root = cr.from(Recruiter.class);
+
+		cr.select(root).where(cb.equal(root.get("recruiter_id"), recruiterId),
+				cb.equal(root.get("password"), currentPass));
+
+		Query query = session.createQuery(cr);
+		Recruiter results = null;
+		results = (Recruiter) query.getSingleResult();
+
+		if (results != null) {
+
+			recruiter = recruiterRepo.getById(recruiterId);
+			recruiter.setPassword(newPass);
+
+			recruiterRepo.save(recruiter);
+
+			session.close();
+			return null;
+		} else {
+
+			session.close();
+			return (Recruiter) ResponseEntity.badRequest();
+		}
+
+	}
+
+	public Recruiter UpdateRecruiterProfileAdmin(int recruiterId, String newPass) {
+
+		Session session = entityManager.unwrap(Session.class);
+
+		CriteriaBuilder cb = session.getCriteriaBuilder();
+		CriteriaQuery<Recruiter> cr = cb.createQuery(Recruiter.class);
+		Root<Recruiter> root = cr.from(Recruiter.class);
+
+		cr.select(root).where(cb.equal(root.get("recruiter_id"), recruiterId));
+
+		Query query = session.createQuery(cr);
+		Recruiter results = null;
+		results = (Recruiter) query.getSingleResult();
+
+		if (results != null) {
+
+			recruiter = recruiterRepo.getById(recruiterId);
 			recruiter.setPassword(newPass);
 
 			recruiterRepo.save(recruiter);
@@ -502,6 +535,7 @@ public class ServiceFirst {
 
 		session.save(candidate);
 		session.save(statusTbl);
+
 		session.close();
 
 		return new ResponseEntity<Candidate>(candidate, HttpStatus.OK);
@@ -551,7 +585,6 @@ public class ServiceFirst {
 	public void AddStatus1(int recruiter_id, int requisition_id, String status) {
 
 		Session session = entityManager.unwrap(Session.class);
-
 		statusTbl.setCandidate(null);
 		statusTbl.setStatus(status);
 		statusTbl.setStatus_date(now);
@@ -631,27 +664,43 @@ public class ServiceFirst {
 		return results;
 	}
 
-	public Client AddClient(int requisitor_id, String client_name) {
+	public ResponseEntity<String> AddClient(int requisitor_id, String client_name) {
 		Session session = entityManager.unwrap(Session.class);
+		Criteria crt = session.createCriteria(Client.class);
+		crt.add(Restrictions.eq("client_name", client_name));
 
-		reqfd.setRequisitor_id(requisitor_id);
-		cl.setRequisitor_fd(reqfd);
-		cl.setClient_name(client_name);
-		session.save(cl);
+		Client result = (Client) crt.uniqueResult();
 
-		session.close();
-		return null;
+		if (result != null) {
+			return ResponseEntity.badRequest().body("This client name is already exist");
+		} else {
+			reqfd.setRequisitor_id(requisitor_id);
+			cl.setRequisitor_fd(reqfd);
+			cl.setClient_name(client_name);
+			session.save(cl);
+
+			session.close();
+			return null;
+		}
 	}
 
-	public Client UpdateClient(int client_id, String client_name) {
+	public ResponseEntity<String> UpdateClient(int client_id, String client_name) {
 		Session session = entityManager.unwrap(Session.class);
+		Criteria crt = session.createCriteria(Client.class);
+		crt.add(Restrictions.eq("client_name", client_name));
 
+		Client result = (Client) crt.uniqueResult();
+
+		if (result != null) {
+			return ResponseEntity.badRequest().body("This client name is already exist");
+		} else {
 		cl = clrepo.getById(client_id);
 		cl.setClient_name(client_name);
 		drrepo.save(dr);
 
 		session.close();
 		return null;
+		}
 	}
 
 	public Client DeleteClient(int client_id) {
@@ -679,35 +728,52 @@ public class ServiceFirst {
 
 	}
 
-	public Duration AddDuration(String duration) {
+	public ResponseEntity<String> AddDuration(String duration) {
 		Session session = entityManager.unwrap(Session.class);
+		Criteria crt = session.createCriteria(Duration.class);
+		crt.add(Restrictions.eq("duration", duration));
 
+		Duration result = (Duration) crt.uniqueResult();
+
+		if (result != null) {
+			return ResponseEntity.badRequest().body("This duration is already exist");
+		} else {
 		dr.setDuration(duration);
 		session.save(dr);
 
 		session.close();
 		return null;
+		}
 	}
 
-	public Duration UpdateDuration(int duration_id, String duration) {
+	public ResponseEntity<String> UpdateDuration(int duration_id, String duration) {
 		Session session = entityManager.unwrap(Session.class);
+		Criteria crt = session.createCriteria(Duration.class);
+		crt.add(Restrictions.eq("duration", duration));
 
+		Duration result = (Duration) crt.uniqueResult();
+
+		if (result != null) {
+			return ResponseEntity.badRequest().body("This duration is already exist");
+		} else {
 		dr = drrepo.getById(duration_id);
 		dr.setDuration(duration);
 		drrepo.save(dr);
 
 		session.close();
 		return null;
+		}
 	}
 
 	public Duration DeleteDuration(int duration_id) {
 		Session session = entityManager.unwrap(Session.class);
-
+		
 		dr = drrepo.getById(duration_id);
 		drrepo.delete(dr);
 
 		session.close();
 		return null;
+		
 	}
 
 	public List<PositionType> getAllPositionType() {
@@ -724,25 +790,41 @@ public class ServiceFirst {
 		return results;
 	}
 
-	public PositionType AddPositionType(String position_type) {
+	public ResponseEntity<String> AddPositionType(String position_type) {
 		Session session = entityManager.unwrap(Session.class);
+		Criteria crt = session.createCriteria(PositionType.class);
+		crt.add(Restrictions.eq("position_type", position_type));
 
+		PositionType result = (PositionType) crt.uniqueResult();
+
+		if (result != null) {
+			return ResponseEntity.badRequest().body("This position type name is already exist");
+		} else {
 		pt.setPosition_type(position_type);
 		session.save(pt);
 
 		session.close();
 		return null;
+		}
 	}
 
-	public PositionType UpdatePositionType(int position_type_id, String position_type) {
+	public ResponseEntity<String> UpdatePositionType(int position_type_id, String position_type) {
 		Session session = entityManager.unwrap(Session.class);
+		Criteria crt = session.createCriteria(PositionType.class);
+		crt.add(Restrictions.eq("position_type", position_type));
 
+		PositionType result = (PositionType) crt.uniqueResult();
+
+		if (result != null) {
+			return ResponseEntity.badRequest().body("This position type name is already exist");
+		} else {
 		pt = ptrepo.getById(position_type_id);
 		pt.setPosition_type(position_type);
 		ptrepo.save(pt);
 
 		session.close();
 		return null;
+		}
 	}
 
 	public PositionType DeletePositionType(int position_type_id) {
@@ -769,25 +851,42 @@ public class ServiceFirst {
 		return results;
 	}
 
-	public RateTerm AddRateTerm(String rate_term) {
+	public ResponseEntity<String> AddRateTerm(String rate_term) {
 		Session session = entityManager.unwrap(Session.class);
+		Criteria crt = session.createCriteria(RateTerm.class);
+		crt.add(Restrictions.eq("rate_term", rate_term));
 
+		RateTerm result = (RateTerm) crt.uniqueResult();
+
+		if (result != null) {
+			return ResponseEntity.badRequest().body("This rate term name is already exist");
+		} else {
 		rt.setRate_term(rate_term);
 		session.save(rt);
 
 		session.close();
 		return null;
+		}
 	}
 
-	public RateTerm UpdateRateTerm(int rate_term_id, String rate_term) {
+	public ResponseEntity<String> UpdateRateTerm(int rate_term_id, String rate_term) {
 		Session session = entityManager.unwrap(Session.class);
+		
+		Criteria crt = session.createCriteria(RateTerm.class);
+		crt.add(Restrictions.eq("rate_term", rate_term));
 
+		RateTerm result = (RateTerm) crt.uniqueResult();
+
+		if (result != null) {
+			return ResponseEntity.badRequest().body("This rate term name is already exist");
+		} else {
 		rt = rtrepo.getById(rate_term_id);
 		rt.setRate_term(rate_term);
 		rtrepo.save(rt);
 
 		session.close();
 		return null;
+		}
 	}
 
 	public RateTerm DeleteRateTerm(int rate_term_id) {
@@ -814,25 +913,42 @@ public class ServiceFirst {
 		return results;
 	}
 
-	public Requisitor_fd AddRequisitorFd(String requisitor_fd) {
+	public ResponseEntity<String> AddRequisitorFd(String requisitor_fd) {
 		Session session = entityManager.unwrap(Session.class);
 
-		reqfd.setRequisitor_fd(requisitor_fd);
-		session.save(reqfd);
+		Criteria crt = session.createCriteria(Requisitor_fd.class);
+		crt.add(Restrictions.eq("requisitor_fd", requisitor_fd));
 
-		session.close();
-		return null;
+		Requisitor_fd result = (Requisitor_fd) crt.uniqueResult();
+
+		if (result != null) {
+			return ResponseEntity.badRequest().body("This requisitor name is already exist");
+		} else {
+			reqfd.setRequisitor_fd(requisitor_fd);
+			session.save(reqfd);
+
+			session.close();
+			return null;
+		}
 	}
 
-	public Requisitor_fd UpdateRequisitorFd(int requisitor_id, String requisitor_fd) {
+	public ResponseEntity<String> UpdateRequisitorFd(int requisitor_id, String requisitor_fd) {
 		Session session = entityManager.unwrap(Session.class);
+		Criteria crt = session.createCriteria(Requisitor_fd.class);
+		crt.add(Restrictions.eq("requisitor_fd", requisitor_fd));
 
+		Requisitor_fd result = (Requisitor_fd) crt.uniqueResult();
+
+		if (result != null) {
+			return ResponseEntity.badRequest().body("This requisitor name is already exist");
+		} else {
 		reqfd = reqfdrepo.getById(requisitor_id);
 		reqfd.setRequisitor_fd(requisitor_fd);
 		reqfdrepo.save(reqfd);
 
 		session.close();
 		return null;
+		}
 	}
 
 	public Requisitor_fd DeleteRequisitorFd(int requisitor_id) {
@@ -859,26 +975,50 @@ public class ServiceFirst {
 		return results;
 	}
 
-	public Status_fd AddStatusFd(String status_fd) {
+	public ResponseEntity<String> AddStatusFd(String status_fd) {
 
 		Session session = entityManager.unwrap(Session.class);
 
+		Criteria crt = session.createCriteria(Status_fd.class);
+		crt.add(Restrictions.eq("status_fd", status_fd));
+
+		Status_fd result = (Status_fd) crt.uniqueResult();
+
+		if (result != null) {
+			return ResponseEntity.badRequest().body("This status name is already exist");
+		} else {
+		
+			stfd.setStatus_fd(status_fd);
+			session.save(stfd);
+
+			session.close();
+			return null;
+
+		}
+
+	}
+
+	public ResponseEntity<String> UpdateStatusFd(int status_fd_id, String status_fd) {
+		Session session = entityManager.unwrap(Session.class);
+		
+		Criteria crt = session.createCriteria(Status_fd.class);
+		crt.add(Restrictions.eq("status_fd", status_fd));
+
+		Status_fd result = (Status_fd) crt.uniqueResult();
+
+		if (result != null) {
+			return ResponseEntity.badRequest().body("This status name is already exist");
+		} else {
+		
+		stfd = stfdrepo.getById(status_fd_id);
+		
+		
 		stfd.setStatus_fd(status_fd);
 		session.save(stfd);
 
 		session.close();
 		return null;
-	}
-
-	public Status_fd UpdateStatusFd(int status_fd_id, String status_fd) {
-		Session session = entityManager.unwrap(Session.class);
-
-		stfd = stfdrepo.getById(status_fd_id);
-		stfd.setStatus_fd(status_fd);
-		stfdrepo.save(stfd);
-
-		session.close();
-		return null;
+		}
 	}
 
 	public Status_fd DeleteStatusFd(int status_fd_id) {
@@ -905,25 +1045,42 @@ public class ServiceFirst {
 		return results;
 	}
 
-	public VisaType AddVisaType(String visa_type) {
+	public ResponseEntity<String> AddVisaType(String visa_type) {
 		Session session = entityManager.unwrap(Session.class);
+		Criteria crt = session.createCriteria(VisaType.class);
+		crt.add(Restrictions.eq("visa_type", visa_type));
 
+		VisaType result = (VisaType) crt.uniqueResult();
+
+		if (result != null) {
+			return ResponseEntity.badRequest().body("This visa type name is already exist");
+		} else {
 		vt.setVisa_type(visa_type);
 		session.save(vt);
 
 		session.close();
 		return null;
+		}
 	}
 
-	public VisaType UpdateVisaType(int visa_type_id, String visa_type) {
+	public ResponseEntity<String> UpdateVisaType(int visa_type_id, String visa_type) {
 		Session session = entityManager.unwrap(Session.class);
+		
+		Criteria crt = session.createCriteria(VisaType.class);
+		crt.add(Restrictions.eq("visa_type", visa_type));
 
+		VisaType result = (VisaType) crt.uniqueResult();
+
+		if (result != null) {
+			return ResponseEntity.badRequest().body("This visa type name is already exist");
+		} else {
 		vt = vtrepo.getById(visa_type_id);
 		vt.setVisa_type(visa_type);
 		vtrepo.save(vt);
 
 		session.close();
 		return null;
+		}
 	}
 
 	public VisaType DeleteVisaType(int visa_type_id) {
@@ -964,11 +1121,390 @@ public class ServiceFirst {
 
 	}
 
-//	public StatusTbl adddelete() {
-//		
-//		requisitionRepo.setEnabledDelete();
-//		
-//		return null;
-//	}
+	public List<StatusTbl> GetRecordsByQuarterly(int empid, String category,int requisition_id) {
+
+		Session session = entityManager.unwrap(Session.class);
+		CriteriaBuilder cb = session.getCriteriaBuilder();
+
+		int current = LocalDate.now().getMonthValue();
+		System.out.println(current);
+
+		int currentYear1 = LocalDate.now().getYear();
+		int lastMonth1 = LocalDate.now().getMonthValue() - 1;
+
+		if (lastMonth1 == 0) {
+			lastMonth1 = 12;
+			currentYear1 = currentYear1 - 1;
+		}
+		
+		LocalDate a = now;
+		LocalDate e = now.minusMonths(1);
+
+
+		LocalDate b = now.minusMonths(3);
+
+		LocalDate c = now.minusMonths(6);
+
+		LocalDate d = now.minusMonths(12);
+
+
+		CriteriaQuery<StatusTbl> cr = cb.createQuery(StatusTbl.class);
+		Root<StatusTbl> root = cr.from(StatusTbl.class);
+
+		if (category.equals("Current")) {
+
+			cr.select(root).where((cb.equal(root.get("recruiter").get("recruiter_id"), empid)),
+					(cb.equal(cb.function("MONTH", Integer.class, root.get("status_date")), current)),
+					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)));
+
+			Query query = session.createQuery(cr);
+			List<StatusTbl> results = query.getResultList();
+			System.out.println(results);
+			session.close();
+//			return results;
+
+			return results;
+
+		}
+
+		else if (category.equals("Last_Month")) {
+
+			cr.select(root).where((cb.equal(root.get("recruiter").get("recruiter_id"), empid)),
+					(cb.equal(cb.function("MONTH", Integer.class, root.get("status_date")), lastMonth1)),
+					(cb.equal(cb.function("YEAR", Integer.class, root.get("status_date")), currentYear1)),
+					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)));
+			Query query = session.createQuery(cr);
+			List<StatusTbl> results = query.getResultList();
+			System.out.println(results);
+			session.close();
+
+			return results;
+
+		}
+		
+		else if (category.equals("Quarterly")) {
+
+			cr.select(root).where((cb.equal(root.get("recruiter").get("recruiter_id"), empid)),
+					(cb.between(root.get("status_date"), b, a)),
+					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)));
+			Query query = session.createQuery(cr);
+			List<StatusTbl> results = query.getResultList();
+			System.out.println(results);
+			session.close();
+
+			return results;
+
+		}
+		
+		else if (category.equals("Half_yearly")) {
+
+			cr.select(root).where((cb.equal(root.get("recruiter").get("recruiter_id"), empid)),
+					(cb.between(root.get("status_date"), c, a)),
+					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)));
+			Query query = session.createQuery(cr);
+			List<StatusTbl> results = query.getResultList();
+			System.out.println(results);
+			session.close();
+
+			return results;
+
+		}
+		
+		
+		else if (category.equals("Yearly")) {
+
+			cr.select(root).where((cb.equal(root.get("recruiter").get("recruiter_id"), empid)),
+					(cb.between(root.get("status_date"), d, a)),
+					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)));
+			Query query = session.createQuery(cr);
+			List<StatusTbl> results = query.getResultList();
+			System.out.println(results);
+			session.close();
+
+			return results;
+
+		}
+		
+		
+		else if (category.equals("All")) {
+
+			cr.select(root).where((cb.equal(root.get("recruiter").get("recruiter_id"), empid)),
+					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)));
+			Query query = session.createQuery(cr);
+			List<StatusTbl> results = query.getResultList();
+			System.out.println(results);
+			session.close();
+
+			return results;
+
+		}
+
+		return null;
+
+	}
+
+	public List<StatusTbl> GetRecordBetDate(int empid, String date1, String date2,int requisition_id) {
+		
+			// TODO Auto-generated method stub
+			Session session = sessionFactory.openSession();
+			CriteriaBuilder cb = session.getCriteriaBuilder();
+		
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			LocalDate dt1 = LocalDate.parse(date1, formatter);
+			System.out.println(dt1);
+			LocalDate dt2 = LocalDate.parse(date2, formatter);
+			System.out.println(dt2);
+
+			CriteriaQuery<StatusTbl> cr = cb.createQuery(StatusTbl.class);
+			Root<StatusTbl> root = cr.from(StatusTbl.class);
+			cr.select(root).where(cb.equal(root.get("recruiter").get("recruiter_id"), empid),
+					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)),
+					(cb.between(root.get("status_date"), dt1, dt2)));
+			Query query = session.createQuery(cr);
+			List<StatusTbl> results = query.getResultList();
+
+			System.out.println(results);
+			session.close();
+
+//			if(results.isEmpty()) {
+			if ((results.size()) == 0) {
+				return (List<StatusTbl>) ResponseEntity.badRequest();
+			} else {
+
+				return results;
+			}
+		
+	}
+	
+	
+	
+	
+	public List<StatusTbl> GetRecordsByQuarterlyAdmin(String category,int requisition_id) {
+
+		Session session = entityManager.unwrap(Session.class);
+		CriteriaBuilder cb = session.getCriteriaBuilder();
+
+		int current = LocalDate.now().getMonthValue();
+		System.out.println(current);
+
+		int currentYear1 = LocalDate.now().getYear();
+		int lastMonth1 = LocalDate.now().getMonthValue() - 1;
+
+		if (lastMonth1 == 0) {
+			lastMonth1 = 12;
+			currentYear1 = currentYear1 - 1;
+		}
+		
+		LocalDate a = now;
+		LocalDate e = now.minusMonths(1);
+
+
+		LocalDate b = now.minusMonths(3);
+
+		LocalDate c = now.minusMonths(6);
+
+		LocalDate d = now.minusMonths(12);
+
+
+		CriteriaQuery<StatusTbl> cr = cb.createQuery(StatusTbl.class);
+		Root<StatusTbl> root = cr.from(StatusTbl.class);
+
+		if (category.equals("Current")) {
+
+			cr.select(root).where((cb.equal(cb.function("MONTH", Integer.class, root.get("status_date")), current)),
+					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)));
+
+			Query query = session.createQuery(cr);
+			List<StatusTbl> results = query.getResultList();
+			System.out.println(results);
+			session.close();
+//			return results;
+
+			return results;
+
+		}
+
+		else if (category.equals("Last_Month")) {
+
+			cr.select(root).where(
+					(cb.equal(cb.function("MONTH", Integer.class, root.get("status_date")), lastMonth1)),
+					(cb.equal(cb.function("YEAR", Integer.class, root.get("status_date")), currentYear1)),
+					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)));
+			Query query = session.createQuery(cr);
+			List<StatusTbl> results = query.getResultList();
+			System.out.println(results);
+			session.close();
+
+			return results;
+
+		}
+		
+		else if (category.equals("Quarterly")) {
+
+			cr.select(root).where(
+					(cb.between(root.get("status_date"), b, a)),
+					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)));
+			Query query = session.createQuery(cr);
+			List<StatusTbl> results = query.getResultList();
+			System.out.println(results);
+			session.close();
+
+			return results;
+
+		}
+		
+		else if (category.equals("Half_yearly")) {
+
+			cr.select(root).where(
+					(cb.between(root.get("status_date"), c, a)),
+					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)));
+			Query query = session.createQuery(cr);
+			List<StatusTbl> results = query.getResultList();
+			System.out.println(results);
+			session.close();
+
+			return results;
+
+		}
+		
+		
+		else if (category.equals("Yearly")) {
+
+			cr.select(root).where(
+					(cb.between(root.get("status_date"), d, a)),
+					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)));
+			Query query = session.createQuery(cr);
+			List<StatusTbl> results = query.getResultList();
+			System.out.println(results);
+			session.close();
+
+			return results;
+
+		}
+		
+		
+		else if (category.equals("All")) {
+
+			cr.select(root).where(
+					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)));
+			Query query = session.createQuery(cr);
+			List<StatusTbl> results = query.getResultList();
+			System.out.println(results);
+			session.close();
+
+			return results;
+
+		}
+
+		return null;
+
+	}
+
+	public List<StatusTbl> GetRecordBetDateAdmin(String date1, String date2,int requisition_id) {
+		
+			// TODO Auto-generated method stub
+			Session session = sessionFactory.openSession();
+			CriteriaBuilder cb = session.getCriteriaBuilder();
+		
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			LocalDate dt1 = LocalDate.parse(date1, formatter);
+			System.out.println(dt1);
+			LocalDate dt2 = LocalDate.parse(date2, formatter);
+			System.out.println(dt2);
+
+			CriteriaQuery<StatusTbl> cr = cb.createQuery(StatusTbl.class);
+			Root<StatusTbl> root = cr.from(StatusTbl.class);
+			cr.select(root).where(
+					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)),
+					(cb.between(root.get("status_date"), dt1, dt2)));
+			Query query = session.createQuery(cr);
+			List<StatusTbl> results = query.getResultList();
+
+			System.out.println(results);
+			session.close();
+
+//			if(results.isEmpty()) {
+			if ((results.size()) == 0) {
+				return (List<StatusTbl>) ResponseEntity.badRequest();
+			} else {
+
+				return results;
+			}
+		
+	}
+
+
+	/*public List<Candidate> GetRecordsByQuarterly2(int empid, String category) {
+		Session session = entityManager.unwrap(Session.class);
+		CriteriaBuilder cb = session.getCriteriaBuilder();
+
+		int current = LocalDate.now().getMonthValue();
+
+		System.out.println(current);
+
+		int currentYear = LocalDate.now().getYear();
+		int lastMonth = LocalDate.now().getMonthValue() - 1;
+
+		if (lastMonth == 0) {
+			lastMonth = 12;
+			currentYear = currentYear - 1;
+		}
+
+		CriteriaQuery<Candidate> cr = cb.createQuery(Candidate.class);
+		Root<Candidate> root = cr.from(Candidate.class);
+
+		if (category.equals("Current")) {
+
+		  //  String query = "SELECT c FROM Candidate c  LEFT JOIN c.statustbl  WHERE requisition="+reqid+" and  MONTH(status_date) ="+current+" "
+		//    		+ "and YEAR(status_date) ="+currentYear+" and flag='1' ";
+	    
+		    String query = "SELECT c FROM Candidate c  LEFT JOIN c.statustbl  WHERE MONTH(status_date) ="+current+" "
+		    		+ "and YEAR(status_date) ="+currentYear+" and status='Submitted'";
+		    Query newquery = entityManager.createQuery(query, Candidate.class);
+		    List<Candidate> results = newquery.getResultList();
+	
+			System.out.println(results);
+			session.close();
+
+			return results;
+
+		}
+		
+		else if (category.equals("Last_Month")) {
+
+		    String query = "SELECT c FROM Candidate c  JOIN c.statustbl WHERE MONTH(status_date) ="+lastMonth+" "
+		    		+ "and YEAR(status_date) ="+currentYear+" and status='Submitted'";
+		    Query newquery = entityManager.createQuery(query, Candidate.class);
+		    List<Candidate> results = newquery.getResultList();
+	
+			System.out.println(results);
+			session.close();
+
+			return results;
+			
+		}
+
+		else if (category.equals("All")) {
+
+		    String query = "SELECT c FROM Candidate c LEFT JOIN c.statustbl WHERE flag='1'";
+		    Query newquery = entityManager.createQuery(query, Candidate.class);
+		    List<Candidate> results = newquery.getResultList();
+	
+			System.out.println(results);
+			session.close();
+
+			return results;
+			
+		}
+
+		
+
+		return null;
+
+	}
+*/
+	
+
+	
 
 }

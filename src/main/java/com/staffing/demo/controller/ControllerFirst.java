@@ -1,5 +1,6 @@
 package com.staffing.demo.controller;
 
+import java.text.ParseException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.staffing.demo.entity.Candidate;
 import com.staffing.demo.entity.Recruiter;
 import com.staffing.demo.entity.Requisition;
@@ -73,9 +75,11 @@ public class ControllerFirst {
 	}
 
 	@GetMapping("/getAllRequisition")
-	public List<Requisition> getEMP_TM(HttpServletRequest request, HttpServletResponse response) {
+	public List<Requisition> getAllRequisition(HttpServletRequest request, HttpServletResponse response) {
 		return serviceFirst.getAllRequisition();
 	}
+	
+	
 
 	@GetMapping("/getRequisitionByID")
 	public Requisition getRquisitionByID(HttpServletRequest request, HttpServletResponse response,
@@ -103,15 +107,20 @@ public class ControllerFirst {
 
 	@PutMapping("/UpdateRecruiterProfile")
 	public Recruiter UpdateRecruiterProfile(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam int recruiterId, String recruiterName, @RequestParam String recruiterEmail,
-			String currentPass, String newPass) {
-		return serviceFirst.UpdateRecruiterProfile(recruiterId, recruiterName, recruiterEmail, currentPass, newPass);
+			@RequestParam int recruiterId,   @RequestParam  String recruiterName, @RequestParam String recruiterEmail) {
+		return serviceFirst.UpdateRecruiterProfile(recruiterId,  recruiterName, recruiterEmail);
+	}
+	
+	@PutMapping("/ChangePassword")
+	public Recruiter ChangePassword(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam int recruiterId, String currentPass, String newPass) {
+		return serviceFirst.ChangePassword(recruiterId,  currentPass, newPass);
 	}
 
 	@PutMapping("/UpdateRecruiterProfileAdmin")
 	public Recruiter UpdateRecruiterProfileAdmin(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam int recruiterId, String recruiterName, @RequestParam String recruiterEmail, String newPass) {
-		return serviceFirst.UpdateRecruiterProfileAdmin(recruiterId, recruiterName, recruiterEmail, newPass);
+			@RequestParam int recruiterId, String newPass) {
+		return serviceFirst.UpdateRecruiterProfileAdmin(recruiterId, newPass);
 	}
 
 
@@ -125,6 +134,13 @@ public class ControllerFirst {
 	public List<Candidate> getAllCandidate() {
 		return candidateRepo.findAll();
 	}
+	
+	
+	
+	/*@GetMapping("/getAllCandidate2")
+	public Candidate getAllCandidate2() {
+		return serviceFirst.getAllCandidate2();
+	}*/
 
 	@GetMapping("/getCandidateByID")
 	public Candidate getCandidateByID(HttpServletRequest request, HttpServletResponse response,
@@ -133,7 +149,7 @@ public class ControllerFirst {
 	}
 
 	@GetMapping("/getAllStatus")
-	public List<StatusTbl> getAllStatus() {
+	public List<StatusTbl> getAllStatus() throws JsonProcessingException {
 		return statustblRepo.findAll();
 	}
 
@@ -225,12 +241,12 @@ public class ControllerFirst {
 	}
 
 	@PostMapping("/AddClient")
-	public Client AddClient(int requisitor_id, String client_name) {
+	public ResponseEntity<String> AddClient(int requisitor_id, String client_name) {
 		return serviceFirst.AddClient(requisitor_id, client_name);
 	}
 
 	@PutMapping("/UpdateClient")
-	public Client UpdateClient(int client_id, String client_name) {
+	public ResponseEntity<String> UpdateClient(int client_id, String client_name) {
 		return serviceFirst.UpdateClient(client_id, client_name);
 	}
 
@@ -245,12 +261,12 @@ public class ControllerFirst {
 	}
 
 	@PostMapping("/AddDuration")
-	public Duration AddDuration(String duration) {
+	public ResponseEntity<String> AddDuration(String duration) {
 		return serviceFirst.AddDuration(duration);
 	}
 
 	@PutMapping("/UpdateDuration")
-	public Duration UpdateDuration(int duration_id, String duration) {
+	public ResponseEntity<String> UpdateDuration(int duration_id, String duration) {
 		return serviceFirst.UpdateDuration(duration_id, duration);
 	}
 
@@ -265,12 +281,12 @@ public class ControllerFirst {
 	}
 
 	@PostMapping("/AddPositionType")
-	public PositionType AddPositionType(String position_type) {
+	public ResponseEntity<String> AddPositionType(String position_type) {
 		return serviceFirst.AddPositionType(position_type);
 	}
 
 	@PutMapping("/UpdatePositionType")
-	public PositionType UpdatePositionType(int position_type_id, String position_type) {
+	public ResponseEntity<String> UpdatePositionType(int position_type_id, String position_type) {
 		return serviceFirst.UpdatePositionType(position_type_id, position_type);
 	}
 
@@ -285,12 +301,12 @@ public class ControllerFirst {
 	}
 
 	@PostMapping("/AddRateTerm")
-	public RateTerm AddRateTerm(String rate_term) {
+	public ResponseEntity<String> AddRateTerm(String rate_term) {
 		return serviceFirst.AddRateTerm(rate_term);
 	}
 
 	@PutMapping("/UpdateRateTerm")
-	public RateTerm UpdateRateTerm(int rate_term_id, String rate_term) {
+	public ResponseEntity<String> UpdateRateTerm(int rate_term_id, String rate_term) {
 		return serviceFirst.UpdateRateTerm(rate_term_id, rate_term);
 	}
 
@@ -305,12 +321,12 @@ public class ControllerFirst {
 	}
 
 	@PostMapping("/AddRequisitorFd")
-	public Requisitor_fd AddRequisitorFd(String requisitor_fd) {
+	public ResponseEntity<String> AddRequisitorFd(String requisitor_fd) {
 		return serviceFirst.AddRequisitorFd(requisitor_fd);
 	}
 
 	@PutMapping("/UpdateRequisitorFd")
-	public Requisitor_fd UpdateRequisitorFd(int requisitor_id, String requisitor_fd) {
+	public ResponseEntity<String> UpdateRequisitorFd(int requisitor_id, String requisitor_fd) {
 		return serviceFirst.UpdateRequisitorFd(requisitor_id, requisitor_fd);
 	}
 
@@ -325,12 +341,12 @@ public class ControllerFirst {
 	}
 
 	@PostMapping("/AddStatusFd")
-	public Status_fd AddStatusFd(String status_fd) {
+	public ResponseEntity<String> AddStatusFd(String status_fd) {
 		return serviceFirst.AddStatusFd(status_fd);
 	}
 
 	@PutMapping("/UpdateStatusFd")
-	public Status_fd UpdateStatusFd(int status_fd_id, String status_fd) {
+	public ResponseEntity<String> UpdateStatusFd(int status_fd_id, String status_fd) {
 		return serviceFirst.UpdateStatusFd(status_fd_id, status_fd);
 	}
 
@@ -345,12 +361,12 @@ public class ControllerFirst {
 	}
 
 	@PostMapping("/AddVisaType")
-	public VisaType AddVisaType(String visa_type) {
+	public ResponseEntity<String> AddVisaType(String visa_type) {
 		return serviceFirst.AddVisaType(visa_type);
 	}
 
 	@PutMapping("/UpdateVisaType")
-	public VisaType UpdateVisaType(int visa_type_id, String visa_type) {
+	public ResponseEntity<String> UpdateVisaType(int visa_type_id, String visa_type) {
 		return serviceFirst.UpdateVisaType(visa_type_id, visa_type);
 	}
 
@@ -373,9 +389,37 @@ public class ControllerFirst {
 	public StatusTbl DeletStatusByID(int status_id) {
 		return serviceFirst.DeletStatusByID(status_id);
 	}
+	
+	@GetMapping(value = "/get_cls_by_Quarterly")
+	public List<StatusTbl> getClsQua(@RequestParam int empid, @RequestParam String category,int requisition_id) {
+		return serviceFirst.GetRecordsByQuarterly(empid, category,requisition_id);
+	}
+	
+	@GetMapping(value = "/get_cls_byDate")
+	public List<StatusTbl> GetRecordsBetweenDate(@RequestParam int empid, String date1, String date2,int requisition_id)
+			throws InterruptedException, ParseException {
+		return this.serviceFirst.GetRecordBetDate(empid, date1, date2,requisition_id);
+	}
+	
+	@GetMapping(value = "/get_cls_by_QuarterlyAdmin")
+	public List<StatusTbl> getClsQuaAdmin( @RequestParam String category,int requisition_id) {
+		return serviceFirst.GetRecordsByQuarterlyAdmin(category,requisition_id);
+	}
+	
+	@GetMapping(value = "/get_cls_byDateAdmin")
+	public List<StatusTbl> GetRecordsBetweenDateAdmin( String date1, String date2,int requisition_id)
+			throws InterruptedException, ParseException {
+		return this.serviceFirst.GetRecordBetDateAdmin( date1, date2,requisition_id);
+	}
 
+//	@GetMapping("/getAllCandidatecate")
+//	public List<Candidate> getAllCandidatecate(@RequestParam int empid, @RequestParam String category) {
+//		return serviceFirst.GetRecordsByQuarterly2(empid, category);
+//	}
 //	@PostMapping("/delst")
 //	public StatusTbl adddelete() {
 //		return serviceFirst.adddelete();
 //	}
+	
+	
 }
