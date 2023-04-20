@@ -392,7 +392,6 @@ public class ServiceFirst {
 			if (z1 != null) {
 
 				return (ResponseEntity<?>) ResponseEntity.badRequest();
-
 			}
 
 			statusTbl.setStatus("Requisition Assigned");
