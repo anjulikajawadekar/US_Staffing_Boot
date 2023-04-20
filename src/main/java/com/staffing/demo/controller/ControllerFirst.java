@@ -391,14 +391,14 @@ public class ControllerFirst {
 	}
 	
 	@GetMapping(value = "/get_cls_by_Quarterly")
-	public List<StatusTbl> getClsQua(@RequestParam int empid, @RequestParam String category,int requisition_id) {
-		return serviceFirst.GetRecordsByQuarterly(empid, category,requisition_id);
+	public List<StatusTbl> getClsQua(@RequestParam int empid, @RequestParam String category) {
+		return serviceFirst.GetRecordsByQuarterly(empid, category);
 	}
 	
 	@GetMapping(value = "/get_cls_byDate")
-	public List<StatusTbl> GetRecordsBetweenDate(@RequestParam int empid, String date1, String date2,int requisition_id)
+	public List<StatusTbl> GetRecordsBetweenDate(@RequestParam int empid, String date1, String date2)
 			throws InterruptedException, ParseException {
-		return this.serviceFirst.GetRecordBetDate(empid, date1, date2,requisition_id);
+		return this.serviceFirst.GetRecordBetDate(empid, date1, date2);
 	}
 	
 	@GetMapping(value = "/get_cls_by_QuarterlyAdmin")
@@ -406,10 +406,21 @@ public class ControllerFirst {
 		return serviceFirst.GetRecordsByQuarterlyAdmin(category,requisition_id);
 	}
 	
+	@GetMapping(value = "/get_cls_by_QuarterlyAdmin2")
+	public List<StatusTbl> getClsQuaAdmin2( @RequestParam String category) {
+		return serviceFirst.GetRecordsByQuarterlyAdmin2(category);
+	}
+	
 	@GetMapping(value = "/get_cls_byDateAdmin")
-	public List<StatusTbl> GetRecordsBetweenDateAdmin( String date1, String date2,int requisition_id)
+	public List<StatusTbl> GetRecordsBetweenDateAdmin( String date1, String date2)
 			throws InterruptedException, ParseException {
-		return this.serviceFirst.GetRecordBetDateAdmin( date1, date2,requisition_id);
+		return this.serviceFirst.GetRecordBetDateAdmin( date1, date2);
+	}
+	
+	@GetMapping(value = "/getRequisitionId")
+	public List<Requisition> getRequisitionId()
+			throws InterruptedException, ParseException {
+		return this.serviceFirst.getRequisitionId();
 	}
 
 //	@GetMapping("/getAllCandidatecate")
