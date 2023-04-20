@@ -1121,7 +1121,7 @@ public class ServiceFirst {
 
 	}
 
-	public List<StatusTbl> GetRecordsByQuarterly(int empid, String category,int requisition_id) {
+	public List<StatusTbl> GetRecordsByQuarterly(int empid, String category) {
 
 		Session session = entityManager.unwrap(Session.class);
 		CriteriaBuilder cb = session.getCriteriaBuilder();
@@ -1154,14 +1154,14 @@ public class ServiceFirst {
 		if (category.equals("Current")) {
 
 			cr.select(root).where((cb.equal(root.get("recruiter").get("recruiter_id"), empid)),
-					(cb.equal(cb.function("MONTH", Integer.class, root.get("status_date")), current)),
-					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)));
+					(cb.equal(cb.function("MONTH", Integer.class, root.get("status_date")), current)));
+					
 
 			Query query = session.createQuery(cr);
 			List<StatusTbl> results = query.getResultList();
-			System.out.println(results);
+		
 			session.close();
-//			return results;
+
 
 			return results;
 
@@ -1171,11 +1171,11 @@ public class ServiceFirst {
 
 			cr.select(root).where((cb.equal(root.get("recruiter").get("recruiter_id"), empid)),
 					(cb.equal(cb.function("MONTH", Integer.class, root.get("status_date")), lastMonth1)),
-					(cb.equal(cb.function("YEAR", Integer.class, root.get("status_date")), currentYear1)),
-					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)));
+					(cb.equal(cb.function("YEAR", Integer.class, root.get("status_date")), currentYear1))
+					);
 			Query query = session.createQuery(cr);
 			List<StatusTbl> results = query.getResultList();
-			System.out.println(results);
+			
 			session.close();
 
 			return results;
@@ -1185,11 +1185,10 @@ public class ServiceFirst {
 		else if (category.equals("Quarterly")) {
 
 			cr.select(root).where((cb.equal(root.get("recruiter").get("recruiter_id"), empid)),
-					(cb.between(root.get("status_date"), b, a)),
-					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)));
+					(cb.between(root.get("status_date"), b, a))
+					);
 			Query query = session.createQuery(cr);
 			List<StatusTbl> results = query.getResultList();
-			System.out.println(results);
 			session.close();
 
 			return results;
@@ -1199,11 +1198,11 @@ public class ServiceFirst {
 		else if (category.equals("Half_yearly")) {
 
 			cr.select(root).where((cb.equal(root.get("recruiter").get("recruiter_id"), empid)),
-					(cb.between(root.get("status_date"), c, a)),
-					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)));
+					(cb.between(root.get("status_date"), c, a))
+					);
 			Query query = session.createQuery(cr);
 			List<StatusTbl> results = query.getResultList();
-			System.out.println(results);
+		
 			session.close();
 
 			return results;
@@ -1214,11 +1213,11 @@ public class ServiceFirst {
 		else if (category.equals("Yearly")) {
 
 			cr.select(root).where((cb.equal(root.get("recruiter").get("recruiter_id"), empid)),
-					(cb.between(root.get("status_date"), d, a)),
-					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)));
+					(cb.between(root.get("status_date"), d, a))
+					);
 			Query query = session.createQuery(cr);
 			List<StatusTbl> results = query.getResultList();
-			System.out.println(results);
+			
 			session.close();
 
 			return results;
@@ -1228,11 +1227,11 @@ public class ServiceFirst {
 		
 		else if (category.equals("All")) {
 
-			cr.select(root).where((cb.equal(root.get("recruiter").get("recruiter_id"), empid)),
-					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)));
+			cr.select(root).where((cb.equal(root.get("recruiter").get("recruiter_id"), empid))
+			);
 			Query query = session.createQuery(cr);
 			List<StatusTbl> results = query.getResultList();
-			System.out.println(results);
+			
 			session.close();
 
 			return results;
@@ -1243,7 +1242,7 @@ public class ServiceFirst {
 
 	}
 
-	public List<StatusTbl> GetRecordBetDate(int empid, String date1, String date2,int requisition_id) {
+	public List<StatusTbl> GetRecordBetDate(int empid, String date1, String date2) {
 		
 			// TODO Auto-generated method stub
 			Session session = sessionFactory.openSession();
@@ -1258,12 +1257,11 @@ public class ServiceFirst {
 			CriteriaQuery<StatusTbl> cr = cb.createQuery(StatusTbl.class);
 			Root<StatusTbl> root = cr.from(StatusTbl.class);
 			cr.select(root).where(cb.equal(root.get("recruiter").get("recruiter_id"), empid),
-					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)),
 					(cb.between(root.get("status_date"), dt1, dt2)));
 			Query query = session.createQuery(cr);
 			List<StatusTbl> results = query.getResultList();
 
-			System.out.println(results);
+			
 			session.close();
 
 //			if(results.isEmpty()) {
@@ -1316,7 +1314,7 @@ public class ServiceFirst {
 
 			Query query = session.createQuery(cr);
 			List<StatusTbl> results = query.getResultList();
-			System.out.println(results);
+		
 			session.close();
 //			return results;
 
@@ -1346,7 +1344,7 @@ public class ServiceFirst {
 					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)));
 			Query query = session.createQuery(cr);
 			List<StatusTbl> results = query.getResultList();
-			System.out.println(results);
+		
 			session.close();
 
 			return results;
@@ -1360,7 +1358,7 @@ public class ServiceFirst {
 					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)));
 			Query query = session.createQuery(cr);
 			List<StatusTbl> results = query.getResultList();
-			System.out.println(results);
+		
 			session.close();
 
 			return results;
@@ -1375,7 +1373,7 @@ public class ServiceFirst {
 					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)));
 			Query query = session.createQuery(cr);
 			List<StatusTbl> results = query.getResultList();
-			System.out.println(results);
+		
 			session.close();
 
 			return results;
@@ -1389,7 +1387,7 @@ public class ServiceFirst {
 					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)));
 			Query query = session.createQuery(cr);
 			List<StatusTbl> results = query.getResultList();
-			System.out.println(results);
+			
 			session.close();
 
 			return results;
@@ -1399,11 +1397,127 @@ public class ServiceFirst {
 		return null;
 
 	}
+	public List<StatusTbl> GetRecordsByQuarterlyAdmin2(String category) {
+		Session session = entityManager.unwrap(Session.class);
+		CriteriaBuilder cb = session.getCriteriaBuilder();
 
-	public List<StatusTbl> GetRecordBetDateAdmin(String date1, String date2,int requisition_id) {
+		int current = LocalDate.now().getMonthValue();
+		System.out.println(current);
+
+		int currentYear1 = LocalDate.now().getYear();
+		int lastMonth1 = LocalDate.now().getMonthValue() - 1;
+
+		if (lastMonth1 == 0) {
+			lastMonth1 = 12;
+			currentYear1 = currentYear1 - 1;
+		}
+		
+		LocalDate a = now;
+		LocalDate e = now.minusMonths(1);
+
+
+		LocalDate b = now.minusMonths(3);
+
+		LocalDate c = now.minusMonths(6);
+
+		LocalDate d = now.minusMonths(12);
+
+
+		CriteriaQuery<StatusTbl> cr = cb.createQuery(StatusTbl.class);
+		Root<StatusTbl> root = cr.from(StatusTbl.class);
+
+		if (category.equals("Current")) {
+
+			cr.select(root).where((cb.equal(cb.function("MONTH", Integer.class, root.get("status_date")), current))
+					);
+
+			Query query = session.createQuery(cr);
+			List<StatusTbl> results = query.getResultList();
+			
+			session.close();
+
+
+			return results;
+
+		}
+
+		else if (category.equals("Last_Month")) {
+
+			cr.select(root).where(
+					(cb.equal(cb.function("MONTH", Integer.class, root.get("status_date")), lastMonth1)),
+					(cb.equal(cb.function("YEAR", Integer.class, root.get("status_date")), currentYear1))
+				);
+			Query query = session.createQuery(cr);
+			List<StatusTbl> results = query.getResultList();
+		
+			session.close();
+
+			return results;
+
+		}
+		
+		else if (category.equals("Quarterly")) {
+
+			cr.select(root).where(
+					(cb.between(root.get("status_date"), b, a))
+				);
+			Query query = session.createQuery(cr);
+			List<StatusTbl> results = query.getResultList();
+			
+			session.close();
+
+			return results;
+
+		}
+		
+		else if (category.equals("Half_yearly")) {
+
+			cr.select(root).where(
+					(cb.between(root.get("status_date"), c, a))
+					);
+			Query query = session.createQuery(cr);
+			List<StatusTbl> results = query.getResultList();
+		
+			session.close();
+
+			return results;
+
+		}
+		
+		
+		else if (category.equals("Yearly")) {
+
+			cr.select(root).where(
+					(cb.between(root.get("status_date"), d, a))
+				);
+			Query query = session.createQuery(cr);
+			List<StatusTbl> results = query.getResultList();
+			
+			session.close();
+
+			return results;
+
+		}
+		
+		
+		else if (category.equals("All")) {
+
+			cr.select(root);
+			Query query = session.createQuery(cr);
+			List<StatusTbl> results = query.getResultList();
+			System.out.println(results);
+			session.close();
+
+			return results;
+
+		}
+
+		return null;
+	}
+	public List<StatusTbl> GetRecordBetDateAdmin(String date1, String date2) {
 		
 			// TODO Auto-generated method stub
-			Session session = sessionFactory.openSession();
+		Session session = entityManager.unwrap(Session.class);
 			CriteriaBuilder cb = session.getCriteriaBuilder();
 		
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -1415,7 +1529,7 @@ public class ServiceFirst {
 			CriteriaQuery<StatusTbl> cr = cb.createQuery(StatusTbl.class);
 			Root<StatusTbl> root = cr.from(StatusTbl.class);
 			cr.select(root).where(
-					(cb.equal(root.get("requisition").get("requisition_id"),requisition_id)),
+				
 					(cb.between(root.get("status_date"), dt1, dt2)));
 			Query query = session.createQuery(cr);
 			List<StatusTbl> results = query.getResultList();
@@ -1433,76 +1547,22 @@ public class ServiceFirst {
 		
 	}
 
-
-	/*public List<Candidate> GetRecordsByQuarterly2(int empid, String category) {
+	public List<Requisition> getRequisitionId() {
 		Session session = entityManager.unwrap(Session.class);
 		CriteriaBuilder cb = session.getCriteriaBuilder();
+		CriteriaQuery<Requisition> cr = cb.createQuery(Requisition.class);
+		Root<Requisition> root = cr.from(Requisition.class);
+		cr.select(root).where(cb.equal(root.get("deleted"),1));
+		Query query = session.createQuery(cr);
+		List<Requisition> results = query.getResultList();
 
-		int current = LocalDate.now().getMonthValue();
-
-		System.out.println(current);
-
-		int currentYear = LocalDate.now().getYear();
-		int lastMonth = LocalDate.now().getMonthValue() - 1;
-
-		if (lastMonth == 0) {
-			lastMonth = 12;
-			currentYear = currentYear - 1;
-		}
-
-		CriteriaQuery<Candidate> cr = cb.createQuery(Candidate.class);
-		Root<Candidate> root = cr.from(Candidate.class);
-
-		if (category.equals("Current")) {
-
-		  //  String query = "SELECT c FROM Candidate c  LEFT JOIN c.statustbl  WHERE requisition="+reqid+" and  MONTH(status_date) ="+current+" "
-		//    		+ "and YEAR(status_date) ="+currentYear+" and flag='1' ";
-	    
-		    String query = "SELECT c FROM Candidate c  LEFT JOIN c.statustbl  WHERE MONTH(status_date) ="+current+" "
-		    		+ "and YEAR(status_date) ="+currentYear+" and status='Submitted'";
-		    Query newquery = entityManager.createQuery(query, Candidate.class);
-		    List<Candidate> results = newquery.getResultList();
-	
-			System.out.println(results);
-			session.close();
-
-			return results;
-
-		}
-		
-		else if (category.equals("Last_Month")) {
-
-		    String query = "SELECT c FROM Candidate c  JOIN c.statustbl WHERE MONTH(status_date) ="+lastMonth+" "
-		    		+ "and YEAR(status_date) ="+currentYear+" and status='Submitted'";
-		    Query newquery = entityManager.createQuery(query, Candidate.class);
-		    List<Candidate> results = newquery.getResultList();
-	
-			System.out.println(results);
-			session.close();
-
-			return results;
-			
-		}
-
-		else if (category.equals("All")) {
-
-		    String query = "SELECT c FROM Candidate c LEFT JOIN c.statustbl WHERE flag='1'";
-		    Query newquery = entityManager.createQuery(query, Candidate.class);
-		    List<Candidate> results = newquery.getResultList();
-	
-			System.out.println(results);
-			session.close();
-
-			return results;
-			
-		}
-
-		
-
-		return null;
-
+		return results;
 	}
-*/
+
+
+
+
+	
 	
 
 	
